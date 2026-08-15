@@ -1,0 +1,6 @@
+2727: const res = await fetch('/apply-mask', {method:'POST', body:formData});
+2842: const res = await fetch('/auto-cut', {method:'POST', body:formData});
+2918: const res = await fetch('/apply-audio-effects', {method:'POST', body:formData});
+3049: const res = await fetch('/apply-keyframes', {method:'POST', body:formData});
+3116: const res = await fetch('/apply-motion-blur', {method:'POST', body:formData});
+3176: const res = await fetch('/analyze-style', {method: 'POST', body: formData});

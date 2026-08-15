@@ -1,0 +1,3718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Editor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --background-color: #f8fafc;
+            --card-background: #ffffff;
+            --text-color: #34495e;
+            --border-radius: 12px;
+        }
+
+        body {
+            background-color: var(--background-color);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--text-color);
+        }
+
+        .navbar {
+            background-color: var(--secondary-color);
+            padding: 1rem 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .navbar-brand {
+            color: white !important;
+            font-weight: 600;
+            font-size: 1.5rem;
+        }
+
+        .nav-link {
+            color: rgba(255,255,255,0.8) !important;
+        }
+
+        .nav-link:hover {
+            color: white !important;
+        }
+
+        .container {
+            max-width: 1200px;
+            padding: 2rem 1rem;
+        }
+
+        .feature-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .feature-btn {
+            background: var(--card-background);
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: var(--border-radius);
+            color: var(--text-color);
+            font-weight: 500;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .feature-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .feature-btn.active {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .feature-content {
+            background: var(--card-background);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .feature-content.active {
+            display: block;
+        }
+
+        .video-preview {
+            width: 100%;
+            border-radius: var(--border-radius);
+            margin: 1rem 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .video-preview.active {
+            display: block;
+        }
+
+        .upload-placeholder {
+            background: #f8fafc;
+            border: 2px dashed #cbd5e1;
+            border-radius: var(--border-radius);
+            padding: 2rem;
+            text-align: center;
+            margin: 1rem 0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .upload-placeholder:hover {
+            border-color: var(--primary-color);
+            background: #f1f5f9;
+        }
+
+        .upload-placeholder i {
+            font-size: 3rem;
+            color: #94a3b8;
+            margin-bottom: 1rem;
+        }
+
+        .upload-placeholder p {
+            color: #64748b;
+            margin: 0;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #2980b9;
+            transform: translateY(-1px);
+        }
+
+        .output-section {
+            background: var(--card-background);
+            padding: 1.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .progress-container {
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .progress {
+            height: 8px;
+            border-radius: 4px;
+            background-color: #e2e8f0;
+        }
+
+        .progress-bar {
+            background-color: var(--primary-color);
+        }
+
+        .status-message {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-color);
+            text-align: center;
+        }
+
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+        .feature-card {
+            padding: 15px;
+            margin: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        .preview-area {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            min-height: 300px;
+        }
+        .advanced-features {
+            background: #f1f5f9;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .advanced-feature-card {
+            background: white;
+            padding: 15px;
+            margin: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+        .advanced-feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .prompt-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+
+        .prompt-input {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .prompt-input input {
+            flex: 1;
+        }
+
+        .prompt-help {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        .prompt-help ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .prompt-help li {
+            margin: 5px 0;
+        }
+    
+
+
+
+
+.nav-links a{color:var(--muted);text-decoration:none;margin-left:1.5rem;font-size:.9rem;transition:.2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--text);}
+
+
+
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.25rem;}
+.card-title{font-size:1.1rem;font-weight:600;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;}
+.card-title i{color:var(--accent);}
+label{font-size:.82rem;color:var(--muted);margin-bottom:.3rem;display:block;}
+input[type=range]{width:100%;accent-color:var(--accent);background:transparent;}
+input[type=number],input[type=text],select,textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:.45rem .7rem;font-size:.85rem;font-family:inherit;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);}
+
+
+
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--muted);}
+.btn-outline:hover{border-color:var(--accent);color:var(--text);}
+.slider-row{display:flex;align-items:center;gap:.7rem;margin-bottom:.75rem;}
+.slider-row span{width:2.5rem;text-align:right;font-size:.8rem;color:var(--accent);}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;}
+.mb-1{margin-bottom:.5rem;}
+.mb-2{margin-bottom:.75rem;}
+.mb-3{margin-bottom:1rem;}
+.mb-4{margin-bottom:1.5rem;}
+.mt-2{margin-top:.75rem;}
+.mt-3{margin-top:1rem;}
+.gap-2{gap:.5rem;}
+.flex{display:flex;}
+.flex-wrap{flex-wrap:wrap;}
+.items-center{align-items:center;}
+.badge{padding:.2rem .55rem;border-radius:20px;font-size:.72rem;font-weight:600;}
+.badge-accent{background:rgba(108,99,255,.2);color:var(--accent);}
+.badge-success{background:rgba(34,197,94,.2);color:var(--success);}
+.section-title{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:.6rem;font-weight:600;}
+canvas{border-radius:10px;display:block;}
+.upload-zone{border:2px dashed var(--border);border-radius:12px;padding:2rem;text-align:center;cursor:pointer;transition:.2s;}
+.upload-zone:hover{border-color:var(--accent);background:rgba(108,99,255,.05);}
+.upload-zone i{font-size:2rem;color:var(--muted);margin-bottom:.5rem;}
+.upload-zone p{color:var(--muted);font-size:.85rem;}
+.progress-bar-wrap{background:var(--surface2);border-radius:20px;height:6px;overflow:hidden;margin:.4rem 0;}
+.progress-fill{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s;}
+video{border-radius:10px;width:100%;}
+.tag{display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .6rem;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:.78rem;cursor:pointer;transition:.2s;}
+.tag:hover,.tag.active{border-color:var(--accent);color:var(--accent);}
+.alert{padding:.7rem 1rem;border-radius:8px;font-size:.85rem;margin:.5rem 0;}
+.alert-info{background:rgba(0,210,255,.1);border:1px solid rgba(0,210,255,.3);color:var(--accent2);}
+.alert-success{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:var(--success);}
+.alert-danger{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:var(--danger);}
+table{width:100%;border-collapse:collapse;font-size:.83rem;}
+th{color:var(--muted);font-weight:500;padding:.4rem .6rem;border-bottom:1px solid var(--border);text-align:left;}
+td{padding:.4rem .6rem;border-bottom:1px solid var(--border);}
+.chip{padding:.15rem .5rem;border-radius:4px;font-size:.75rem;background:var(--surface2);color:var(--muted);}
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
+
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Video Editor Pro</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{{ url_for('editor') }}">Single Video Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('multi_video_editor') }}">Multi-Video Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#styleanalysis" onclick="showFeature('styleanalysis'); return false;" style="color: #00d2ff !important; font-weight: 700; background: rgba(0,210,255,0.12); border-radius: 6px; padding: 0.5rem 0.8rem; margin: 0 4px;">
+                            <i class="fas fa-magic me-1"></i> Style Analyzer <span class="badge bg-primary ms-1" style="font-size:0.65rem; vertical-align:middle;">FEATURED</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Upload Section -->
+                <div class="upload-section-main mb-4" id="uploadContent" style="background: var(--card-background); border-radius: var(--border-radius); padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+                    <h3><i class="fas fa-upload me-2"></i>Upload Video</h3>
+                    <div class="upload-area" id="uploadArea">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTMyIDJDMTUuNDMxIDIgMiAxNS40MzEgMiAzMmMwIDE2LjU2OSAxMy40MzEgMzAgMzAgMzBzMzAtMTMuNDMxIDMwLTMwQzYyIDE1LjQzMSA0OC41NjkgMiAzMiAyem0wIDRjMTQuMzU5IDAgMjYgMTEuNjQxIDI2IDI2UzQ2LjM1OSA1OCAzMiA1OCA2IDQ2LjM1OSA2IDMyIDIxLjY0MSA2IDMyIDZ6bTAgOGMtMS4xMDQgMC0yIC44OTYtMiAydjE2aC0xNmMtMS4xMDQgMC0yIC44OTYtMiAyczAuODk2IDIgMiAyaDE2djE2YzAgMS4xMDQgMC44OTYgMiAyIDJzMi0wLjg5NiAyLTJWMzZoMTZjMS4xMDQgMCAyLTAuODk2IDItMnMtMC44OTYtMi0yLTJIMzRWMTZjMC0xLjEwNC0wLjg5Ni0yLTItMnoiIGZpbGw9IiM2NjY2NjYiLz48L3N2Zz4=" alt="Upload" style="width: 64px; height: 64px;">
+                        <p class="mt-3">Click to upload a video or drag and drop</p>
+                    </div>
+                    <video id="videoPreview" class="video-preview" controls></video>
+                </div>
+
+                <!-- Feature Buttons -->
+                <div class="feature-buttons">
+                    <button class="feature-btn" onclick="showFeature('trim', this)">
+                        <i class="fas fa-cut"></i> Trim Video
+                    </button>
+                    <button class="feature-btn" onclick="showFeature('resize', this)">
+                        <i class="fas fa-expand"></i> Resize
+                    </button>
+                    <button class="feature-btn" onclick="showFeature('speed', this)">
+                        <i class="fas fa-tachometer-alt"></i> Speed
+                    </button>
+                    <button class="feature-btn" onclick="showFeature('extract-audio', this)">
+                        <i class="fas fa-music"></i> Extract Audio
+                    </button>
+                    <!-- New Feature Buttons -->
+                    <button class="feature-btn" onclick="showFeature('masking', this)">
+                        <i class="fas fa-mask me-2"></i>Masking
+                    </button>
+                    <button class="feature-btn" onclick="showFeature('autocut', this)">
+                        <i class="fas fa-scissors me-2"></i>Bulk Mark & Auto-Cut
+                    </button>
+                    <button class="feature-btn" onclick="showFeature('audio', this)">
+                        <i class="fas fa-sliders-h me-2"></i>Audio Effects
+                    </button>
+                    <button class="feature-btn" onclick="showFeature('keyframes', this)">
+                        <i class="fas fa-bezier-curve me-2"></i>Keyframes
+                    </button>
+                    <button class="feature-btn" id="btn-motionblur" onclick="showFeature('motionblur', this)">
+                        <i class="fas fa-wind me-2"></i>Motion Blur
+                    </button>
+                    <button class="feature-btn" id="btn-styleanalysis" onclick="showFeature('styleanalysis', this)" style="border: 2px solid #6c63ff; background: linear-gradient(135deg, rgba(108, 99, 255, 0.15), rgba(0, 210, 255, 0.15)); font-weight: 600;">
+                        <i class="fas fa-chart-line me-2" style="color:#6c63ff;"></i>Style Analyzer <span class="badge bg-primary" style="font-size:0.65rem; margin-left:4px;">NEW</span>
+                    </button>
+                    <button class="feature-btn" onclick="showFeature('color-grading', this)">
+                        <i class="fas fa-palette"></i> Color Grading
+                    </button>
+                    <button class="feature-btn" onclick="showFeature('speed-ramp', this)">
+                        <i class="fas fa-bolt"></i> Speed Ramping
+                    </button>
+                    <button class="feature-btn" onclick="showFeature('effects', this)">
+                        <i class="fas fa-magic"></i> Effects
+                    </button>
+                    <button class="feature-btn" onclick="showFeature('animation', this)">
+                        <i class="fas fa-magic"></i> Animations
+                    </button>
+                    <button class="feature-btn" onclick="showFeature('pexels-clips', this)">
+                        <i class="fas fa-video"></i> Pexels Stock Clips
+                    </button>
+                    <button class="feature-btn" onclick="showFeature('youtube-clips', this)">
+                        <i class="fab fa-youtube"></i> YouTube Clips
+                    </button>
+                    <button class="feature-btn" onclick="showFeature('youtube-download', this)">
+                        <i class="fas fa-download"></i> YouTube Download
+                    </button>
+                    <button class="feature-btn" onclick="showFeature('dailymotion-clips', this)">
+                        <i class="fas fa-play-circle"></i> Dailymotion Clips
+                    </button>
+                </div>
+
+                <!-- Feature Contents -->
+                <div class="feature-content" id="trimContent">
+                    <h3><i class="fas fa-cut me-2"></i>Trim Video</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">Start Time (seconds)</label>
+                            <input type="number" id="startTime" class="form-control" step="0.1" min="0">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">End Time (seconds)</label>
+                            <input type="number" id="endTime" class="form-control" step="0.1" min="0">
+                        </div>
+                    </div>
+                    <button onclick="trimVideo()" class="btn btn-primary mt-3">
+                        <i class="fas fa-cut me-2"></i>Trim Video
+                    </button>
+                </div>
+
+                <div class="feature-content" id="resizeContent">
+                    <h3><i class="fas fa-expand me-2"></i>Resize Video</h3>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">Width (pixels)</label>
+                            <input type="number" id="width" class="form-control" min="1">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Height (pixels)</label>
+                            <input type="number" id="height" class="form-control" min="1">
+                        </div>
+                    </div>
+                    <button onclick="resizeVideo()" class="btn btn-primary mt-3">
+                        <i class="fas fa-expand me-2"></i>Resize Video
+                    </button>
+                </div>
+
+                <div class="feature-content" id="speedContent">
+                    <h3><i class="fas fa-tachometer-alt me-2"></i>Change Speed</h3>
+                    <div class="mb-3">
+                        <label class="form-label">Speed Factor (e.g., 0.5 for half speed, 2 for double speed)</label>
+                        <input type="number" id="speedFactor" class="form-control" step="0.1" min="0.1" value="1.0">
+                    </div>
+                    <button onclick="changeSpeed()" class="btn btn-primary">
+                        <i class="fas fa-tachometer-alt me-2"></i>Change Speed
+                    </button>
+                </div>
+
+                <div class="feature-content" id="extract-audioContent">
+                    <h3><i class="fas fa-music me-2"></i>Extract Audio</h3>
+                    <p>Extract audio from your video</p>
+                    <button onclick="extractAudio()" class="btn btn-primary">
+                        <i class="fas fa-music me-2"></i>Extract Audio
+                    </button>
+                </div>
+
+                <!-- New Feature Contents -->
+                <div class="feature-content" id="transitionContent">
+                    <h3><i class="fas fa-film me-2"></i>Apply Transitions</h3>
+                    <div class="mb-3">
+                        <label class="form-label">Select Videos (2 or more)</label>
+                        <input type="file" id="transitionFiles" class="form-control" multiple accept="video/*">
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="form-label">Transition Type</label>
+                            <select id="transitionType" class="form-control">
+                                <option value="fade">Fade</option>
+                                <option value="dissolve">Dissolve</option>
+                                <option value="wipe">Wipe</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Duration (seconds)</label>
+                            <input type="number" id="transitionDuration" class="form-control" step="0.1" min="0.1" value="1.0">
+                        </div>
+                    </div>
+                    <button onclick="applyTransition()" class="btn btn-primary mt-3">
+                        <i class="fas fa-film me-2"></i>Apply Transition
+                    </button>
+                </div>
+
+                <div class="feature-content" id="color-gradingContent">
+                    <h3><i class="fas fa-palette me-2"></i>Color Grading</h3>
+                    <div class="mb-3">
+                        <label class="form-label">Color Style</label>
+                        <select id="colorStyle" class="form-control">
+                            <option value="cinematic">Cinematic</option>
+                            <option value="vintage">Vintage</option>
+                            <option value="warm">Warm</option>
+                            <option value="cool">Cool</option>
+                            <option value="noir">Noir</option>
+                            <option value="vibrant">Vibrant</option>
+                        </select>
+                    </div>
+                    <button onclick="applyColorGrading()" class="btn btn-primary">
+                        <i class="fas fa-palette me-2"></i>Apply Color Grade
+                    </button>
+                </div>
+
+                <div class="feature-content" id="speed-rampContent">
+                    <h3><i class="fas fa-bolt me-2"></i>Speed Ramping</h3>
+                    <div class="mb-3">
+                        <label class="form-label">Target Speed</label>
+                        <input type="number" id="targetSpeed" class="form-control" step="0.1" min="0.1" value="1.5">
+                    </div>
+                    <button onclick="applySpeedRamping()" class="btn btn-primary">
+                        <i class="fas fa-bolt me-2"></i>Apply Speed Ramp
+                    </button>
+                </div>
+
+                <div class="feature-content" id="effectsContent">
+                    <h3><i class="fas fa-magic me-2"></i>Video Effects</h3>
+                    <div class="mb-3">
+                        <label class="form-label">Effect Type</label>
+                        <select id="effectType" class="form-control">
+                            <option value="freeze">Freeze Frame</option>
+                            <option value="motion_blur">Motion Blur</option>
+                            <option value="gaussian_blur">Gaussian Blur</option>
+                            <option value="sepia">Sepia</option>
+                            <option value="negative">Negative</option>
+                            <option value="mirror">Mirror</option>
+                            <option value="pixelate">Pixelate</option>
+                            <option value="edge_detection">Edge Detection</option>
+                        </select>
+                    </div>
+                    <button onclick="applyEffect()" class="btn btn-primary">
+                        <i class="fas fa-magic me-2"></i>Apply Effect
+                    </button>
+                </div>
+
+                <div class="feature-content" id="animationContent">
+                    <h3><i class="fas fa-magic me-2"></i>Apply Animation</h3>
+                    <div class="mb-3">
+                        <label class="form-label">Animation Type</label>
+                        <select id="animationType" class="form-control">
+                            <option value="zoom">Zoom In</option>
+                            <option value="zoom_out">Zoom Out</option>
+                            <option value="fade">Fade In</option>
+                            <option value="fade_out">Fade Out</option>
+                            <option value="rotate">Rotation</option>
+                            <option value="slide">Slide</option>
+                            <option value="pan">Pan</option>
+                            <option value="bounce">Bounce</option>
+                            <option value="blur">Blur Effect</option>
+                            <option value="brightness">Brightness</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Duration (seconds)</label>
+                        <input type="number" id="animationDuration" class="form-control" step="0.1" min="0.1" value="2.0">
+                    </div>
+                    <button onclick="applyAnimation()" class="btn btn-primary">
+                        <i class="fas fa-magic me-2"></i>Apply Animation
+                    </button>
+                </div>
+
+                <div class="prompt-section">
+                    <h3>Text Commands</h3>
+                    <div class="prompt-input">
+                        <input type="text" id="promptInput" placeholder="Enter your command (e.g., 'trim start=10 end=30', 'speed factor=1.5', 'color_grade preset=cinematic')" class="form-control">
+                        <button onclick="processPrompt()" class="btn btn-primary">Process</button>
+                    </div>
+                    <div class="prompt-help">
+                        <h4>Available Commands: <button class="btn btn-sm btn-info" onclick="showPromptHelp()">Show All Commands</button></h4>
+                        <div id="basicCommands">
+                            <strong>Basic Operations:</strong>
+                            <ul>
+                                <li><code>trim start=10 end=30</code> - Trim video from 10s to 30s</li>
+                                <li><code>resize width=1920 height=1080</code> - Resize to 1920x1080</li>
+                                <li><code>speed factor=2.0</code> - Change speed (2x faster)</li>
+                                <li><code>extract_audio format=mp3</code> - Extract audio as MP3</li>
+                            </ul>
+                            <strong>Effects & Color:</strong>
+                            <ul>
+                                <li><code>color_grade preset=cinematic</code> - Apply color preset</li>
+                                <li><code>effect type=blur strength=2</code> - Apply blur effect</li>
+                                <li><code>overlay type=text content="Hello" position=center</code> - Add text</li>
+                            </ul>
+                        </div>
+                        <div id="allCommands" style="display: none;">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <strong>Basic Operations:</strong>
+                                    <ul style="font-size: 0.85em;">
+                                        <li><code>trim start=X end=Y</code></li>
+                                        <li><code>resize width=X height=Y</code></li>
+                                        <li><code>speed factor=X</code></li>
+                                        <li><code>extract_audio format=mp3|wav</code></li>
+                                    </ul>
+                                    <strong>Color & Effects:</strong>
+                                    <ul style="font-size: 0.85em;">
+                                        <li><code>color_grade preset=cinematic|vintage|warm|cool|noir|vibrant</code></li>
+                                        <li><code>color_grade brightness=X contrast=Y saturation=Z</code></li>
+                                        <li><code>effect type=blur|sepia|negative|mirror|pixelate|edge_detection strength=X</code></li>
+                                        <li><code>speed_ramp start=X end=Y factor=Z</code></li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <strong>Animation & Text:</strong>
+                                    <ul style="font-size: 0.85em;">
+                                        <li><code>animation type=zoom|pan|fade|rotate start=X end=Y scale=Z</code></li>
+                                        <li><code>animation type=pan direction=left|right|up|down</code></li>
+                                        <li><code>overlay type=text content="Text" position=center|top|bottom</code></li>
+                                        <li><code>overlay type=text content="Text" x=X y=Y duration=W</code></li>
+                                    </ul>
+                                    <strong>Multi-Video Commands:</strong>
+                                    <ul style="font-size: 0.85em;">
+                                        <li><code>merge_videos transition=fade duration=2</code> (requires multiple files)</li>
+                                        <li><code>transition type=dissolve duration=1.5</code> (requires multiple files)</li>
+                                        <li><em>Use Multi Video Editor for multi-file operations</em></li>
+                                    </ul>
+                                    <strong>Examples:</strong>
+                                    <ul style="font-size: 0.85em;">
+                                        <li><code>trim start=5 end=15</code></li>
+                                        <li><code>speed factor=1.5</code></li>
+                                        <li><code>color_grade preset=cinematic</code></li>
+                                        <li><code>effect type=blur strength=3</code></li>
+                                        <li><code>overlay type=text content="My Video" position=bottom</code></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Pexels Stock Clips Search Content -->
+                <div class="feature-content" id="pexels-clipsContent">
+                    <h3><i class="fas fa-video me-2"></i>Find Stock Clips (Pexels)</h3>
+                    <div class="form-group">
+                        <label for="pexelsScriptDescription">Describe your scene or keyword:</label>
+                        <textarea id="pexelsScriptDescription" class="form-control" rows="3" placeholder="E.g. 'nature', 'city night', 'business meeting'"></textarea>
+                    </div>
+                    <button class="btn btn-primary mt-3" onclick="searchPexelsClips()">
+                        <i class="fas fa-search me-2"></i>Search Pexels Clips
+                    </button>
+                    <div id="pexelsResults" class="mt-4" style="display: none;">
+                        <h4>Pexels Stock Clips</h4>
+                        <div id="pexelsClipsList" class="row"></div>
+                    </div>
+                </div>
+
+                <!-- Add YouTube Clips Search Content -->
+                <div class="feature-content" id="youtube-clipsContent">
+                    <h3><i class="fab fa-youtube me-2"></i>Find YouTube Clips</h3>
+                    <div class="form-group">
+                        <label for="youtubeScriptDescription">Describe what you're looking for:</label>
+                        <textarea id="youtubeScriptDescription" class="form-control" rows="3" placeholder="E.g. 'cats playing', 'sunset timelapse', 'city night'"></textarea>
+                    </div>
+                    <button class="btn btn-primary mt-3" onclick="searchYouTubeClips()">
+                        <i class="fas fa-search me-2"></i>Search YouTube Clips
+                    </button>
+                    <div id="youtubeResults" class="mt-4" style="display: none;">
+                        <h4>YouTube Clips</h4>
+                        <div class="row" id="youtubeClipsContainer"></div>
+                    </div>
+                </div>
+
+                <!-- YouTube Download Content -->
+                <div class="feature-content" id="youtube-downloadContent">
+                    <h3><i class="fas fa-download me-2"></i>Download YouTube Video</h3>
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        Download YouTube videos directly to your library for editing and processing.
+                    </div>
+                    
+                    <div class="form-group mb-3">
+                        <label for="youtubeDownloadUrl" class="form-label">YouTube Video URL:</label>
+                        <input type="url" id="youtubeDownloadUrl" class="form-control" 
+                               placeholder="https://www.youtube.com/watch?v=..." 
+                               required>
+                        <div class="form-text">Paste the full YouTube video URL here</div>
+                    </div>
+                    
+                    <button class="btn btn-success" onclick="downloadYouTubeVideo()">
+                        <i class="fas fa-download me-2"></i>Download Video
+                    </button>
+                    
+                    <div id="downloadProgress" class="mt-3" style="display: none;">
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                                 role="progressbar" style="width: 100%">
+                                Downloading...
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="downloadResult" class="mt-3"></div>
+                    
+                    <!-- Downloaded Files List -->
+                    <div class="mt-4">
+                        <h5><i class="fas fa-folder me-2"></i>Downloaded Videos</h5>
+                        <button class="btn btn-outline-primary btn-sm mb-3" onclick="refreshDownloadsList()">
+                            <i class="fas fa-refresh me-1"></i>Refresh List
+                        </button>
+                        <div id="downloadsList">
+                            <div class="text-muted">Click "Refresh List" to see your downloaded videos</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Dailymotion Clips Search Content -->
+                <div class="feature-content" id="dailymotion-clipsContent">
+                    <h3><i class="fas fa-play-circle me-2"></i>Find Dailymotion Clips</h3>
+                    <div class="form-group">
+                        <label for="dailymotionScriptDescription">Describe what you're looking for:</label>
+                        <textarea id="dailymotionScriptDescription" class="form-control" rows="3" placeholder="E.g. 'cats playing', 'sunset timelapse', 'city night'"></textarea>
+                    </div>
+                    <button class="btn btn-primary mt-3" onclick="searchDailymotionClips()">
+                        <i class="fas fa-search me-2"></i>Search Dailymotion Clips
+                    </button>
+                    <div id="dailymotionResults" class="mt-4" style="display: none;">
+                        <h4>Dailymotion Clips</h4>
+                        <div class="row" id="dailymotionClipsContainer"></div>
+                    </div>
+                </div>
+
+                
+
+                <!-- MASKING Content -->
+                <div class="feature-content" id="maskingContent">
+                    <h3><i class="fas fa-mask me-2"></i>Masking</h3>
+  <div class="two-col" style="align-items:start">
+    <div>
+      <div class="card mb-3" style="display:none;" id="mask-video-container">
+        <video id="mask-video" controls style="width:100%; border-radius:8px;"></video>
+      </div>
+      <div class="card mb-3">
+        <div class="card-title"><i class="fas fa-tools"></i> Mask Tools</div>
+        <div class="flex flex-wrap gap-2 mb-3">
+          <button class="tag active" id="tool-rect" onclick="setMaskTool('rect',this)"><i class="fas fa-vector-square"></i> Rectangle</button>
+          <button class="tag" id="tool-circle" onclick="setMaskTool('circle',this)"><i class="fas fa-circle"></i> Circle</button>
+          <button class="tag" id="tool-freehand" onclick="setMaskTool('freehand',this)"><i class="fas fa-pencil-alt"></i> Freehand</button>
+          <button class="tag" id="tool-polygon" onclick="setMaskTool('polygon',this)"><i class="fas fa-draw-polygon"></i> Polygon</button>
+        </div>
+        <div class="section-title">Mask Properties</div>
+        <div class="mb-2">
+          <label>Opacity</label>
+          <div class="slider-row"><input type="range" id="mask-opacity" min="0" max="100" value="70" oninput="updateMaskProp()"><span id="mask-opacity-val">70%</span></div>
+        </div>
+        <div class="mb-2">
+          <label>Feather</label>
+          <div class="slider-row"><input type="range" id="mask-feather" min="0" max="50" value="5" oninput="updateMaskProp()"><span id="mask-feather-val">5px</span></div>
+        </div>
+        <div class="mb-2">
+          <label>Blend Mode</label>
+          <select id="mask-blend" onchange="updateMaskProp()">
+            <option>Normal</option><option>Multiply</option><option>Screen</option>
+            <option>Overlay</option><option>Color Dodge</option><option>Color Burn</option>
+          </select>
+        </div>
+        <div class="mb-2">
+          <label>Mask Color</label>
+          <input type="color" id="mask-color" value="#6c63ff" style="width:100%;height:36px;background:none;border-radius:8px;border:1px solid var(--border);cursor:pointer;" onchange="updateMaskProp()">
+        </div>
+        <div class="section-title mt-3"><i class="fas fa-lightbulb" style="color:#f1c40f;"></i> Quick Presets</div>
+        <div class="flex gap-2 flex-wrap mb-3">
+          <button class="btn" style="background: linear-gradient(45deg, #ff416c, #ff4b2b); border: none; color: white; font-weight: 600; padding: 0.4rem 1rem; border-radius: 20px; box-shadow: 0 4px 10px rgba(255, 65, 108, 0.4);" onclick="masks=[{type:'rect',x:100,y:50,w:280,h:180,opacity:0.7,feather:15,color:'#6c63ff',blend:'Normal'}]; renderMasks(); updateLayersList();"><i class="fas fa-magic me-1"></i> Center Box</button>
+          <button class="btn" style="background: linear-gradient(45deg, #f7b733, #fc4a1a); border: none; color: white; font-weight: 600; padding: 0.4rem 1rem; border-radius: 20px; box-shadow: 0 4px 10px rgba(252, 74, 26, 0.4);" onclick="masks=[{type:'circle',cx:240,cy:140,rx:100,ry:100,opacity:0.8,feather:5,color:'#ff0055',blend:'Multiply'}]; renderMasks(); updateLayersList();"><i class="fas fa-magic me-1"></i> Red Circle</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><i class="fas fa-clock"></i> Keyframe Timeline</div>
+        <div class="section-title">Mask Keyframes</div>
+        <canvas id="mask-timeline-canvas" width="380" height="48" style="background:var(--surface2);width:100%;border-radius:6px;"></canvas>
+        <div class="flex gap-2 mt-2">
+          <button class="btn btn-outline" onclick="addMaskKeyframe()"><i class="fas fa-plus"></i> Add Keyframe</button>
+          <button class="btn btn-outline" id="mask-toggle-btn" onclick="toggleMaskLayer()" style="color:var(--muted)"><i class="fas fa-eye"></i> Toggle</button>
+        </div>
+        <div id="mask-keyframe-list" class="mt-2" style="font-size:.8rem;color:var(--muted)">No keyframes yet.</div>
+      </div>
+    </div>
+    <div>
+      <div class="card mb-3">
+        <div class="card-title"><i class="fas fa-paint-brush"></i> Canvas Preview</div>
+        <div style="position:relative;background:#000;border-radius:10px;min-height:280px;overflow:hidden;">
+          <canvas id="mask-canvas" style="position:absolute;top:0;left:0;width:100%;height:100%;cursor:crosshair;z-index:2;border-radius:10px;"></canvas>
+          <div id="mask-no-video" style="display:flex;align-items:center;justify-content:center;height:280px;color:var(--muted);font-size:.85rem;">Upload a video to start masking</div>
+        </div>
+        <div class="flex gap-2 mt-2">
+          <button class="btn btn-danger" onclick="clearMasks()"><i class="fas fa-trash"></i> Clear All</button>
+          <button class="btn btn-primary" onclick="exportMaskOverlay()"><i class="fas fa-magic"></i> Apply Mask to Video</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><i class="fas fa-layer-group"></i> Mask Layers</div>
+        <div id="mask-layers" style="font-size:.83rem;color:var(--muted)">No masks drawn yet.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+                <!-- AUTOCUT Content -->
+                <div class="feature-content" id="autocutContent">
+                    <h3><i class="fas fa-scissors me-2"></i>Bulk Mark & Auto-Cut</h3>
+  <div class="two-col" style="align-items:start">
+    <div>
+      <div class="card mb-3" style="display:none;" id="ac-video-container">
+        <video id="ac-video" controls style="width:100%; border-radius:8px;"></video>
+      </div>
+      <div class="card mb-3">
+        <div class="card-title"><i class="fas fa-map-marker-alt"></i> Timeline &amp; Marking</div>
+        <div style="position:relative;margin-bottom:.5rem;">
+          <canvas id="ac-timeline" height="54" style="width:100%;background:var(--surface2);border-radius:8px;cursor:pointer;"></canvas>
+          <div id="ac-cursor" style="position:absolute;top:0;bottom:0;width:2px;background:var(--accent2);left:0;pointer-events:none;"></div>
+        </div>
+        <div class="flex gap-2 flex-wrap">
+          <button class="btn btn-primary" onclick="acAddMark()"><i class="fas fa-plus"></i> Add Mark Here</button>
+          <button class="btn btn-outline" onclick="acClearMarks()"><i class="fas fa-trash"></i> Clear All</button>
+          <button class="btn btn-success" onclick="acAutoCut()"><i class="fas fa-scissors"></i> Auto-Cut</button>
+        </div>
+        <div class="section-title mt-3"><i class="fas fa-lightbulb" style="color:#f1c40f;"></i> Quick Presets</div>
+        <div class="flex gap-2 flex-wrap mb-2">
+          <button class="btn" style="background: linear-gradient(45deg, #00b09b, #96c93d); border: none; color: white; font-weight: 600; padding: 0.4rem 1rem; border-radius: 20px; box-shadow: 0 4px 10px rgba(0, 176, 155, 0.4);" onclick="setPresetMarks([1, 3])"><i class="fas fa-bolt me-1"></i> Cut 1s to 3s</button>
+          <button class="btn" style="background: linear-gradient(45deg, #11998e, #38ef7d); border: none; color: white; font-weight: 600; padding: 0.4rem 1rem; border-radius: 20px; box-shadow: 0 4px 10px rgba(17, 153, 142, 0.4);" onclick="setPresetMarks([5, 10])"><i class="fas fa-bolt me-1"></i> Cut 5s to 10s</button>
+        </div>
+        <div class="alert alert-info mt-2" style="font-size:.78rem"><i class="fas fa-info-circle me-1"></i>Play the video and click "Add Mark Here" at each cut point. Marks are paired: odd = start, even = end.</div>
+      </div>
+    </div>
+    <div>
+      <div class="card mb-3">
+        <div class="card-title"><i class="fas fa-list"></i> Marks (<span id="ac-mark-count">0</span>)</div>
+        <table id="ac-marks-table">
+          <thead><tr><th>#</th><th>Label</th><th>Time</th><th></th></tr></thead>
+          <tbody id="ac-marks-body"></tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-title"><i class="fas fa-cut"></i> Generated Clips</div>
+        <div id="ac-clips-list" style="color:var(--muted);font-size:.83rem">Run Auto-Cut to see clips here.</div>
+        <div class="flex gap-2 mt-2" id="ac-export-row" style="display:none!important">
+          <button class="btn btn-success" onclick="acExportJSON()"><i class="fas fa-download"></i> Export JSON</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+                <!-- AUDIO Content -->
+                <div class="feature-content" id="audioContent">
+                    <h3><i class="fas fa-sliders-h me-2"></i>Audio Effects</h3>
+  <div class="two-col" style="align-items:start">
+    <div>
+      <div class="card mb-3" style="display:none;" id="audio-video-container">
+        <audio id="audio-player" controls style="display:none;width:100%;margin-top:.75rem;border-radius:8px;"></audio>
+        <video id="audio-video-player" controls style="display:none;width:100%;margin-top:.75rem;border-radius:8px;"></video>
+      </div>
+      <div class="card mb-3">
+        <div class="card-title"><i class="fas fa-sliders-h"></i> Effect Chain</div>
+        <div id="audio-chain" class="flex gap-2 flex-wrap mb-2">
+          <span style="color:var(--muted);font-size:.8rem">No effects added yet.</span>
+        </div>
+        <div class="flex gap-2 flex-wrap">
+          <button class="tag" onclick="audioAddEffect('volume')"><i class="fas fa-volume-up"></i> Volume</button>
+          <button class="tag" onclick="audioAddEffect('eq')"><i class="fas fa-wave-square"></i> 3-Band EQ</button>
+          <button class="tag" onclick="audioAddEffect('reverb')"><i class="fas fa-water"></i> Reverb</button>
+          <button class="tag" onclick="audioAddEffect('delay')"><i class="fas fa-redo"></i> Delay</button>
+          <button class="tag" onclick="audioAddEffect('compressor')"><i class="fas fa-compress-arrows-alt"></i> Compressor</button>
+          <button class="tag" onclick="audioAddEffect('filter')"><i class="fas fa-filter"></i> HP Filter</button>
+        </div>
+        <div class="section-title mt-3"><i class="fas fa-lightbulb" style="color:#f1c40f;"></i> Quick Presets</div>
+        <div class="flex gap-2 flex-wrap mb-2">
+          <button class="btn" style="background: linear-gradient(45deg, #667db6, #0082c8); border: none; color: white; font-weight: 600; padding: 0.4rem 1rem; border-radius: 20px; box-shadow: 0 4px 10px rgba(0, 130, 200, 0.4);" onclick="audioChain=[]; audioAddEffect('reverb'); audioAddEffect('eq'); audioRenderChain();"><i class="fas fa-headphones me-1"></i> Concert Hall</button>
+          <button class="btn" style="background: linear-gradient(45deg, #4b6cb7, #182848); border: none; color: white; font-weight: 600; padding: 0.4rem 1rem; border-radius: 20px; box-shadow: 0 4px 10px rgba(24, 40, 72, 0.4);" onclick="audioChain=[]; audioAddEffect('delay'); audioAddEffect('filter'); audioRenderChain();"><i class="fas fa-headphones me-1"></i> Radio Voice</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><i class="fas fa-chart-bar"></i> Frequency Analyzer</div>
+        <canvas id="audio-analyzer-canvas" height="90" style="width:100%;background:#0a0c13;border-radius:8px;"></canvas>
+        <div class="flex gap-2 mt-2">
+          <button class="btn btn-primary" id="audio-play-btn" onclick="audioPlayWithEffects()"><i class="fas fa-play"></i> Preview Audio</button>
+          <button class="btn btn-outline" onclick="audioStop()"><i class="fas fa-stop"></i> Stop</button>
+          <button class="btn btn-success" onclick="audioRenderVideoEffect()"><i class="fas fa-magic"></i> Render Audio</button>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card" id="audio-inspector">
+        <div class="card-title"><i class="fas fa-cog"></i> Effect Inspector</div>
+        <div id="audio-no-effect" style="color:var(--muted);font-size:.83rem">Select an effect from the chain to edit its parameters.</div>
+        <div id="audio-effect-params" style="display:none">
+          <div class="section-title" id="audio-effect-name">Effect</div>
+          <div id="audio-effect-controls"></div>
+          <div class="flex gap-2 mt-3">
+            <label style="display:flex;align-items:center;gap:.4rem;color:var(--text);cursor:pointer;font-size:.83rem;">
+              <input type="checkbox" id="audio-bypass" onchange="audioToggleBypass()"> Bypass
+            </label>
+            <button class="btn btn-danger" onclick="audioRemoveEffect()"><i class="fas fa-trash"></i> Remove</button>
+            <button class="btn btn-outline" onclick="audioSavePreset()"><i class="fas fa-save"></i> Save Preset</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+                <!-- KEYFRAMES Content -->
+                <div class="feature-content" id="keyframesContent">
+                    <h3><i class="fas fa-bezier-curve me-2"></i>Keyframes</h3>
+  <div class="two-col" style="align-items:start">
+    <div>
+      <!-- Dedicated video preview for keyframes -->
+      <div class="card mb-3" style="display:none;" id="kf-video-container">
+        <video id="kf-video-preview" style="width:100%;border-radius:8px;margin-top:.5rem" controls muted></video>
+      </div>
+      <div class="card mb-3">
+        <div class="card-title"><i class="fas fa-bezier-curve"></i> Property Selector</div>
+        <div class="mb-2"><label>Animated Property</label>
+          <select id="kf-property" onchange="kfSelectProperty()">
+            <option value="opacity">Opacity</option><option value="positionX">Position X</option>
+            <option value="positionY">Position Y</option><option value="scale">Scale</option>
+            <option value="rotation">Rotation</option><option value="blur">Blur</option>
+          </select>
+        </div>
+        <div class="section-title">Timeline (click to add keyframe)</div>
+        <canvas id="kf-timeline" height="48" style="width:100%;background:var(--surface2);border-radius:8px;cursor:pointer;"></canvas>
+        <div class="flex gap-2 mt-2">
+          <button class="btn btn-primary" onclick="kfAddKeyframe()"><i class="fas fa-plus"></i> Add KF</button>
+          <button class="btn btn-outline" onclick="kfPrev()"><i class="fas fa-chevron-left"></i></button>
+          <button class="btn btn-outline" onclick="kfNext()"><i class="fas fa-chevron-right"></i></button>
+          <button class="btn btn-danger" onclick="kfDelete()"><i class="fas fa-trash"></i></button>
+        </div>
+        <div class="section-title mt-3"><i class="fas fa-lightbulb" style="color:#f1c40f;"></i> Quick Presets</div>
+        <div class="flex gap-2 flex-wrap">
+          <button class="btn" style="background: linear-gradient(45deg, #8E2DE2, #4A00E0); border: none; color: white; font-weight: 600; padding: 0.4rem 1rem; border-radius: 20px; box-shadow: 0 4px 10px rgba(142, 45, 226, 0.4);" onclick="kfLoadPreset('fade')"><i class="fas fa-sparkles me-1"></i> Fade Out</button>
+          <button class="btn" style="background: linear-gradient(45deg, #cc2b5e, #753a88); border: none; color: white; font-weight: 600; padding: 0.4rem 1rem; border-radius: 20px; box-shadow: 0 4px 10px rgba(204, 43, 94, 0.4);" onclick="kfLoadPreset('zoom')"><i class="fas fa-sparkles me-1"></i> Zoom In 1.5x</button>
+          <button class="btn" style="background: linear-gradient(45deg, #1D976C, #93F9B9); border: none; color: white; font-weight: 600; padding: 0.4rem 1rem; border-radius: 20px; box-shadow: 0 4px 10px rgba(29, 151, 108, 0.4);" onclick="kfLoadPreset('spin')"><i class="fas fa-sparkles me-1"></i> Spin 360°</button>
+        </div>
+      </div>
+      <div class="card mb-3">
+        <div class="card-title"><i class="fas fa-cog"></i> Keyframe Inspector</div>
+        <div id="kf-no-sel" style="color:var(--muted);font-size:.83rem">Click on the timeline to select a keyframe.</div>
+        <div id="kf-inspector" style="display:none">
+          <div class="mb-2"><label>Time (ms)</label><input type="number" id="kf-time" min="0" step="100" onchange="kfUpdateSelected()"></div>
+          <div class="mb-2"><label>Value</label><input type="number" id="kf-value" step="0.01" onchange="kfUpdateSelected()"></div>
+          <div class="mb-2"><label>Easing</label>
+            <select id="kf-easing" onchange="kfUpdateSelected()">
+              <option>linear</option><option>easeIn</option><option>easeOut</option><option>easeInOut</option>
+              <option>bounce</option><option>elastic</option><option>spring</option>
+            </select>
+          </div>
+          <div class="flex gap-2 flex-wrap mt-2">
+            <button class="tag" onclick="kfSetEasing('linear')">Linear</button>
+            <button class="tag" onclick="kfSetEasing('easeIn')">EaseIn</button>
+            <button class="tag" onclick="kfSetEasing('easeOut')">EaseOut</button>
+            <button class="tag" onclick="kfSetEasing('easeInOut')">EaseInOut</button>
+            <button class="tag" onclick="kfSetEasing('bounce')">Bounce</button>
+            <button class="tag" onclick="kfSetEasing('elastic')">Elastic</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card mb-3">
+        <div class="card-title"><i class="fas fa-chart-area"></i> Graph Editor</div>
+        <canvas id="kf-graph" height="220" style="width:100%;background:#0a0c13;border-radius:8px;cursor:crosshair;"></canvas>
+        <div class="flex gap-2 mt-2">
+          <button class="btn btn-outline" onclick="kfZoomIn()"><i class="fas fa-search-plus"></i></button>
+          <button class="btn btn-outline" onclick="kfZoomOut()"><i class="fas fa-search-minus"></i></button>
+          <button class="btn btn-outline" onclick="kfResetView()"><i class="fas fa-expand"></i> Fit</button>
+          <button class="btn btn-success ms-auto" onclick="kfApplyToVideo()"><i class="fas fa-magic"></i> Render Video</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-title"><i class="fas fa-list"></i> All Keyframes</div>
+        <div id="kf-list" style="font-size:.82rem;color:var(--muted)">No keyframes yet. Click the timeline to add one.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+                <!-- MOTIONBLUR Content -->
+                <div class="feature-content" id="motionblurContent">
+                    <h3><i class="fas fa-wind me-2"></i>Motion Blur</h3>
+  <div class="two-col" style="align-items:start">
+    <div>
+      <div class="card mb-3" style="display:none;" id="mb-video-container">
+        <video id="mb-video" controls style="width:100%; border-radius:8px;"></video>
+      </div>
+      <div class="card">
+        <div class="card-title"><i class="fas fa-wind"></i> Motion Blur Settings</div>
+        <div class="mb-2"><label>Blur Type</label>
+          <select id="mb-type" onchange="mbPreview()">
+            <option value="linear">Linear</option><option value="radial">Radial</option>
+            <option value="zoom">Zoom</option>
+          </select>
+        </div>
+        <div class="mb-2"><label>Direction (°)</label>
+          <div class="slider-row"><input type="range" id="mb-dir" min="0" max="360" value="0" oninput="mbUpdateVal(this,'mb-dir-val','°');mbPreview()"><span id="mb-dir-val">0°</span></div>
+        </div>
+        <div class="mb-2"><label>Strength</label>
+          <div class="slider-row"><input type="range" id="mb-strength" min="0" max="100" value="40" oninput="mbUpdateVal(this,'mb-str-val','%');mbPreview()"><span id="mb-str-val">40%</span></div>
+        </div>
+        <div class="mb-2"><label>Sample Count (quality)</label>
+          <select id="mb-samples" onchange="mbPreview()">
+            <option value="4">4 (Fast)</option><option value="8" selected>8 (Medium)</option>
+            <option value="16">16 (High)</option><option value="32">32 (Ultra)</option>
+          </select>
+        </div>
+        <div class="mb-2"><label>Threshold</label>
+          <div class="slider-row"><input type="range" id="mb-thresh" min="0" max="100" value="20" oninput="mbUpdateVal(this,'mb-thresh-val','%');mbPreview()"><span id="mb-thresh-val">20%</span></div>
+        </div>
+        <div class="section-title mt-3"><i class="fas fa-lightbulb" style="color:#f1c40f;"></i> Quick Presets</div>
+        <div class="flex gap-2 flex-wrap mb-3">
+          <button class="btn" style="background: linear-gradient(45deg, #f12711, #f5af19); border: none; color: white; font-weight: 600; padding: 0.4rem 1rem; border-radius: 20px; box-shadow: 0 4px 10px rgba(241, 39, 17, 0.4);" onclick="document.getElementById('mb-strength').value=80; mbUpdateVal(document.getElementById('mb-strength'),'mb-str-val','%'); mbPreview();"><i class="fas fa-wind me-1"></i> Heavy Blur</button>
+          <button class="btn" style="background: linear-gradient(45deg, #11998e, #38ef7d); border: none; color: white; font-weight: 600; padding: 0.4rem 1rem; border-radius: 20px; box-shadow: 0 4px 10px rgba(17, 153, 142, 0.4);" onclick="document.getElementById('mb-strength').value=20; mbUpdateVal(document.getElementById('mb-strength'),'mb-str-val','%'); mbPreview();"><i class="fas fa-wind me-1"></i> Light Motion</button>
+        </div>
+        <div class="flex gap-2 mt-3">
+          <button class="btn btn-primary" onclick="mbPreview()"><i class="fas fa-eye"></i> Preview</button>
+          <button class="btn btn-outline" onclick="mbReset()"><i class="fas fa-undo"></i> Reset</button>
+          <button class="btn btn-success ms-auto" onclick="mbApplyToVideo()"><i class="fas fa-magic"></i> Apply to Video</button>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <div class="card-title"><i class="fas fa-TV"></i> Canvas Preview</div>
+        <canvas id="mb-canvas" height="280" style="width:100%;background:#000;border-radius:10px;"></canvas>
+        <div id="mb-no-video" class="mt-2" style="color:var(--muted);font-size:.83rem;text-align:center">Upload a video to preview motion blur.</div>
+        <div class="alert alert-info mt-2" style="font-size:.78rem"><i class="fas fa-info-circle me-1"></i>Preview shows one captured frame with blur applied. Final render uses your existing editor's effect pipeline.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+                <!-- STYLEANALYSIS Content -->
+                <div class="feature-content" id="styleanalysisContent">
+                    <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+                        <div>
+                            <h3 class="mb-0"><i class="fas fa-chart-line me-2" style="color: #6c63ff;"></i>Style Analyzer</h3>
+                            <p class="text-muted mb-0" style="font-size:0.85rem;">Analyze video pacing, color palette, brightness, audio loudness, and generate a step-by-step replication guide.</p>
+                        </div>
+                        <span class="badge" style="background:#6c63ff; color:white; padding:0.4rem 0.8rem; font-size:0.8rem;"><i class="fas fa-check-circle me-1"></i>Deterministic Engine v2</span>
+                    </div>
+  <div class="two-col" style="align-items:start">
+    <div>
+      <div class="card mb-3" style="display:none;" id="sa-video-container">
+        <video id="sa-video" controls style="width:100%; border-radius:8px;"></video>
+      </div>
+      <div class="card">
+        <div class="card-title"><i class="fas fa-chart-line"></i> Analysis Controls</div>
+        <div class="mb-3">
+          <label style="font-size:.82rem;color:var(--muted);margin-bottom:.3rem;display:block">Skill Level</label>
+          <select id="sa-skill-level" style="width:100%;border-radius:8px;padding:.4rem .7rem;background:var(--surface2);border:1px solid var(--border);color:var(--text)">
+            <option value="beginner">Beginner</option>
+            <option value="intermediate" selected>Intermediate</option>
+            <option value="advanced">Advanced</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" id="sa-analyze-btn" onclick="saAnalyze()" style="width:100%;justify-content:center;padding:.75rem"><i class="fas fa-wand-magic-sparkles"></i> Analyze Video Style</button>
+        <div id="sa-progress-wrap" style="display:none;margin-top:.75rem">
+          <div style="font-size:.8rem;color:var(--muted);margin-bottom:.3rem" id="sa-progress-label">Analyzing...</div>
+          <div class="progress-bar-wrap"><div class="progress-fill" id="sa-progress-fill" style="width:0%"></div></div>
+        </div>
+        <div class="flex gap-2 mt-3" id="sa-export-btns" style="display:none!important">
+          <button class="btn btn-success" onclick="saExportJSON()"><i class="fas fa-download"></i> Export JSON</button>
+          <button class="btn btn-outline" onclick="saExportMarkdown()"><i class="fas fa-file-alt"></i> Export .md</button>
+          <button class="btn btn-outline" onclick="saCopyGuide()"><i class="fas fa-copy"></i> Copy Guide</button>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div id="sa-results" style="display:none">
+        <div class="card mb-3">
+          <div class="card-title"><i class="fas fa-tachometer-alt"></i> Style Score</div>
+          <div style="text-align:center;padding:1rem 0">
+            <canvas id="sa-score-canvas" width="140" height="140" style="display:inline-block;background:transparent;border-radius:50%;"></canvas>
+            <div id="sa-score-label" style="font-size:2rem;font-weight:700;color:var(--accent);margin-top:.5rem">—</div>
+            <div style="font-size:.8rem;color:var(--muted)">Overall Style Score</div>
+          </div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-title"><i class="fas fa-palette"></i> Color Palette</div>
+          <div id="sa-palette" class="flex gap-2 flex-wrap"></div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-title"><i class="fas fa-chart-bar"></i> Pacing &amp; Cuts
+            <span id="sa-pacing-note" style="font-size:.72rem;color:var(--muted);font-weight:400;margin-left:.5rem"></span>
+          </div>
+          <canvas id="sa-pacing-canvas" height="90" style="width:100%;background:#0a0c13;border-radius:8px;"></canvas>
+          <div id="sa-pacing-info" class="mt-2" style="font-size:.82rem;color:var(--muted)"></div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-title"><i class="fas fa-eye"></i> Visual Metrics</div>
+          <div id="sa-visual-metrics" style="font-size:.82rem"></div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-title"><i class="fas fa-volume-up"></i> Audio</div>
+          <div id="sa-audio-info" style="font-size:.82rem;color:var(--muted)"></div>
+        </div>
+        <div class="card mb-3">
+          <div class="card-title"><i class="fas fa-lightbulb"></i> Recommendations</div>
+          <ul id="sa-recommendations" style="font-size:.83rem;padding-left:1.2rem"></ul>
+        </div>
+        <!-- Replication Guide Sections -->
+        <div id="sa-guide-wrap" style="display:none">
+          <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem">
+            <h5 style="margin:0;color:var(--text)"><i class="fas fa-book me-2"></i>Replication Guide</h5>
+            <span style="font-size:.72rem;background:var(--surface2);border-radius:20px;padding:.2rem .6rem;color:var(--muted)">evidence-based · no AI guesses</span>
+          </div>
+          <div id="sa-guide-project-setup" class="sa-guide-section"></div>
+          <div id="sa-guide-shot-recipe" class="sa-guide-section"></div>
+          <div id="sa-guide-edit-blueprint" class="sa-guide-section"></div>
+          <div id="sa-guide-color-recipe" class="sa-guide-section"></div>
+          <div id="sa-guide-audio-recipe" class="sa-guide-section"></div>
+          <div id="sa-guide-export-settings" class="sa-guide-section"></div>
+          <div id="sa-guide-editor-steps" class="sa-guide-section"></div>
+        </div>
+        <div class="card">
+          <div class="card-title"><i class="fas fa-table"></i> Full Analysis</div>
+          <div id="sa-full-table" style="font-size:.8rem"></div>
+        </div>
+      </div>
+      <div id="sa-empty" style="color:var(--muted);font-size:.85rem;text-align:center;padding:3rem 1rem">
+        <i class="fas fa-chart-line" style="font-size:2rem;margin-bottom:.5rem;display:block"></i>Upload a video and click Analyze to see the style report.
+      </div>
+    </div>
+  </div>
+</div>
+
+                <!-- Add Merge Videos Content -->
+                <div class="feature-content" id="mergeContent">
+                    <h3><i class="fas fa-code-branch me-2"></i>Merge Videos</h3>
+                    <div class="upload-placeholder" id="mergeDropArea">
+                        <i class="fas fa-upload"></i>
+                        <p>Drag & drop videos here or click to select</p>
+                        <input type="file" id="mergeInput" multiple accept="video/*" style="display: none;">
+                    </div>
+                    <div id="mergeFiles" class="mt-3">
+                        <h4>Selected Files:</h4>
+                        <div class="selected-files"></div>
+                        <div class="video-previews d-flex flex-wrap justify-content-center"></div>
+                    </div>
+                    <button class="btn btn-primary w-100 mt-3" onclick="mergeVideos()">
+                        <i class="fas fa-plus me-2"></i>Merge Videos
+                    </button>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <!-- Output Section -->
+                <div class="output-section">
+                    <h3><i class="fas fa-play-circle me-2"></i>Output Preview</h3>
+                    <div class="video-container">
+                        <video id="outputPreview" class="video-preview w-100" controls>
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div id="processedVideoOptions" class="form-check mt-3" style="display: none;">
+                        <input class="form-check-input" type="checkbox" id="useProcessedVideo">
+                        <label class="form-check-label" for="useProcessedVideo">
+                            Apply next effect to processed video
+                        </label>
+                    </div>
+                    <div class="progress-container mt-3" style="display: none;">
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                        </div>
+                        <div class="status-message text-center mt-2"></div>
+                    </div>
+                    <a id="downloadBtn" class="btn btn-primary w-100 mt-3" style="display: none;">
+                        <i class="fas fa-download me-2"></i>Download Processed Video
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentVideo = null;
+        let processedVideo = null; // To store the most recently processed video
+        let mergeFilesList = [];
+
+        function showFeature(feature, btn) {
+            document.querySelectorAll('.feature-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.feature-btn').forEach(b => {
+                b.classList.remove('active');
+            });
+            const target = document.getElementById(feature + 'Content');
+            if (target) target.classList.add('active');
+            
+            // Activate button
+            if (btn) {
+                btn.classList.add('active');
+            } else {
+                const foundBtn = document.getElementById('btn-' + feature) || document.querySelector(`.feature-btn[onclick*="'${feature}'"]`);
+                if (foundBtn) foundBtn.classList.add('active');
+            }
+
+            // Sync video preview for style analyzer if video is loaded
+            if (feature === 'styleanalysis' && currentVideo) {
+                saVideo = document.getElementById('sa-video');
+                if (saVideo) {
+                    if (!saVideo.src) saVideo.src = URL.createObjectURL(currentVideo);
+                    const container = document.getElementById('sa-video-container');
+                    if (container) container.style.display = 'block';
+                }
+            }
+        }
+
+        // On page load, open requested feature or default to trim
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const featureParam = urlParams.get('feature') || (window.location.hash ? window.location.hash.replace('#', '') : null);
+            if (featureParam && document.getElementById(featureParam + 'Content')) {
+                showFeature(featureParam);
+            } else {
+                showFeature('trim');
+            }
+        });
+
+        function syncFeatureVideos(file) {
+            const objectUrl = URL.createObjectURL(file);
+            const videosToUpdate = [
+                { id: 'mask-video', container: 'mask-video-container', setup: () => { 
+                    const mnv = document.getElementById('mask-no-video');
+                    if(mnv) mnv.style.display='none'; 
+                    if(typeof initMaskCanvas === 'function') initMaskCanvas();
+                } },
+                { id: 'ac-video', container: 'ac-video-container', setup: () => { 
+                    acVideo = document.getElementById('ac-video'); // Ensure global acVideo is set
+                    const v = document.getElementById('ac-video');
+                    if(typeof acUpdateCursor === 'function') v.ontimeupdate = acUpdateCursor; 
+                    acTlCanvas = document.getElementById('ac-timeline'); 
+                    if(acTlCanvas) {
+                        acTlCtx = acTlCanvas.getContext('2d'); 
+                        acTlCanvas.width = acTlCanvas.offsetWidth || 600; 
+                        if(typeof acTimelineClick === 'function') acTlCanvas.onclick = acTimelineClick; 
+                    }
+                    if(typeof acDrawTimeline === 'function') v.onloadedmetadata = acDrawTimeline; 
+                } },
+                { id: 'audio-video-player', container: 'audio-video-container', setup: () => {
+                    document.getElementById('audio-video-player').style.display='block';
+                    document.getElementById('audio-player').style.display='none';
+                } },
+                { id: 'kf-video-preview', container: 'kf-video-container', setup: null },
+                { id: 'mb-video', container: 'mb-video-container', setup: () => { 
+                    mbVideo = document.getElementById('mb-video'); // Ensure global mbVideo is set
+                    const mnv = document.getElementById('mb-no-video');
+                    if(mnv) mnv.style.display='none'; 
+                    if(typeof mbPreview === 'function') {
+                        document.getElementById('mb-video').onseeked = mbPreview; 
+                        setTimeout(mbPreview, 500);
+                    }
+                } },
+                { id: 'sa-video', container: 'sa-video-container', setup: () => {
+                    saVideo = document.getElementById('sa-video'); // Ensure global saVideo is set
+                } }
+            ];
+
+            videosToUpdate.forEach(v => {
+                const el = document.getElementById(v.id);
+                const container = document.getElementById(v.container);
+                if (el) {
+                    el.src = objectUrl;
+                    if(container) container.style.display = 'block';
+                    if (v.setup) {
+                        try { v.setup(); } catch(e) { console.error('Error setting up ' + v.id, e); }
+                    }
+                }
+            });
+        }
+
+        // File upload handling
+        const uploadArea = document.getElementById('uploadArea');
+
+        uploadArea.addEventListener('click', () => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'video/*,audio/*';
+            input.onchange = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    currentVideo = file;  // Set the currentVideo
+                    uploadArea.innerHTML = `
+                        <p>Selected file: ${file.name}</p>
+                        <div class="badge mt-2 px-3 py-2" style="background:#6c63ff; color:white; font-size:1.1rem; cursor:pointer; box-shadow:0 4px 12px rgba(108,99,255,0.5);"><i class="fas fa-video me-2"></i>Click to change video</div>
+                    `;
+                    // Show video preview
+                    const videoPreview = document.createElement('video');
+                    videoPreview.src = URL.createObjectURL(file);
+                    videoPreview.controls = true;
+                    videoPreview.style.maxWidth = '100%';
+                    videoPreview.style.marginTop = '20px';
+                    uploadArea.appendChild(videoPreview);
+                    syncFeatureVideos(file);
+                }
+            };
+            input.click();
+        });
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#007bff';
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.style.borderColor = '#ccc';
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.style.borderColor = '#ccc';
+            const file = e.dataTransfer.files[0];
+            if (file) {
+                currentVideo = file;  // Set the currentVideo
+                uploadArea.innerHTML = `
+                    <p>Selected file: ${file.name}</p>
+                    <div class="badge mt-2 px-3 py-2" style="background:#6c63ff; color:white; font-size:1.1rem; cursor:pointer; box-shadow:0 4px 12px rgba(108,99,255,0.5);"><i class="fas fa-video me-2"></i>Click to change video</div>
+                `;
+                // Show video preview
+                const videoPreview = document.createElement('video');
+                videoPreview.src = URL.createObjectURL(file);
+                videoPreview.controls = true;
+                videoPreview.style.maxWidth = '100%';
+                videoPreview.style.marginTop = '20px';
+                uploadArea.appendChild(videoPreview);
+                syncFeatureVideos(file);
+            }
+        });
+
+        // Update the handleMergeFiles function
+        function handleMergeFiles(files) {
+            mergeFilesList = files;
+            const selectedFilesDiv = document.querySelector('#mergeFiles .selected-files');
+            const videoPreviewsDiv = document.querySelector('#mergeFiles .video-previews');
+            
+            // Clear previous content
+            selectedFilesDiv.innerHTML = '';
+            videoPreviewsDiv.innerHTML = '';
+
+            // Show selected files with preview
+            files.forEach((file, index) => {
+                // Create file item
+                const fileItem = document.createElement('div');
+                fileItem.className = 'alert alert-info d-flex justify-content-between align-items-center mb-2';
+                fileItem.innerHTML = `
+                    <span>${index + 1}. ${file.name}</span>
+                    <button class="btn btn-sm btn-danger" onclick="removeFile(${index})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                selectedFilesDiv.appendChild(fileItem);
+
+                // Create video preview
+                const videoPreview = document.createElement('video');
+                videoPreview.src = URL.createObjectURL(file);
+                videoPreview.controls = true;
+                videoPreview.style.maxWidth = '200px';
+                videoPreview.style.margin = '10px';
+                videoPreview.className = 'video-preview';
+                videoPreviewsDiv.appendChild(videoPreview);
+            });
+        }
+
+        function removeFile(index) {
+            mergeFilesList = mergeFilesList.filter((_, i) => i !== index);
+            handleMergeFiles(mergeFilesList);
+        }
+
+        async function mergeVideos() {
+            if (mergeFilesList.length < 2) {
+                alert('Please select at least 2 videos to merge');
+                return;
+            }
+
+            const formData = new FormData();
+            mergeFilesList.forEach((file, index) => {
+                formData.append('files[]', file);
+            });
+
+            showProgress();
+            updateProgress(0, 'Merging videos...');
+
+            try {
+                const response = await fetch('/merge', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin'  // Include cookies in the request
+                });
+
+                // Check if we need to redirect to login
+                if (response.status === 401) {
+                    const data = await response.json();
+                    if (data.redirect) {
+                        window.location.href = data.redirect;
+                        return;
+                    }
+                }
+
+                // Check if response is JSON
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error('Server returned non-JSON response');
+                }
+
+                const result = await response.json();
+
+                if (result.success) {
+                    updateProgress(100, 'Videos merged successfully!');
+                    showOutput(`/output/${result.output_file}`);
+                    
+                    // Update currentVideo with the merged video
+                    fetch(`/output/${result.output_file}`)
+                        .then(response => response.blob())
+                        .then(blob => {
+                            currentVideo = new File([blob], 'merged_video.mp4', { type: 'video/mp4' });
+                        });
+                } else {
+                    updateProgress(0, `Error: ${result.error}`);
+                }
+            } catch (error) {
+                console.error('Merge error:', error);
+                updateProgress(0, `Error: ${error.message}`);
+            }
+        }
+
+        // Update the merge input handling
+        document.getElementById('mergeInput').addEventListener('change', function(e) {
+            const files = Array.from(e.target.files).filter(file => file.type.startsWith('video/'));
+            if (files.length > 0) {
+                handleMergeFiles(files);
+            }
+        });
+
+        // Add drag and drop for merge
+        const mergeDropArea = document.querySelector('#mergeContent .upload-placeholder');
+
+        mergeDropArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            mergeDropArea.style.borderColor = '#007bff';
+        });
+
+        mergeDropArea.addEventListener('dragleave', () => {
+            mergeDropArea.style.borderColor = '#ccc';
+        });
+
+        mergeDropArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            mergeDropArea.style.borderColor = '#ccc';
+            const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('video/'));
+            if (files.length > 0) {
+                handleMergeFiles(files);
+            }
+        });
+
+        // Progress handling
+        function showProgress(show = true) {
+            const progressContainer = document.querySelector('.progress-container');
+            if (progressContainer) {
+                progressContainer.style.display = show ? 'block' : 'none';
+            }
+        }
+
+        function updateProgress(percent, message) {
+            const progressBar = document.querySelector('.progress-bar');
+            const statusMessage = document.querySelector('.status-message');
+            if (progressBar && statusMessage) {
+                progressBar.style.width = `${percent}%`;
+                statusMessage.textContent = message;
+                statusMessage.style.display = 'block';
+            }
+        }
+
+        // Video processing functions
+        async function trimVideo() {
+            const videoToProcess = getVideoToProcess() || currentVideo;
+            if (!videoToProcess) {
+                alert('Please upload a video first');
+                return;
+            }
+
+            const startTime = document.getElementById('startTime').value;
+            const endTime = document.getElementById('endTime').value;
+
+            const formData = new FormData();
+            formData.append('file', videoToProcess);
+            formData.append('start_time', startTime);
+            formData.append('end_time', endTime);
+
+            showProgress();
+            updateProgress(0, 'Processing video...');
+
+            try {
+                const response = await fetch('/trim', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    updateProgress(100, 'Video processed successfully!');
+                    showOutput(`/output/${result.output_file}`);
+                } else {
+                    updateProgress(0, `Error: ${result.error}`);
+                }
+            } catch (error) {
+                updateProgress(0, `Error: ${error.message}`);
+            }
+        }
+
+        async function resizeVideo() {
+            const videoToProcess = getVideoToProcess() || currentVideo;
+            if (!videoToProcess) {
+                alert('Please upload a video first');
+                return;
+            }
+            const width = document.getElementById('width').value;
+            const height = document.getElementById('height').value;
+
+            if (!width || !height) {
+                alert('Please enter both width and height');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', videoToProcess);
+            formData.append('width', width);
+            formData.append('height', height);
+
+            showProgress();
+            updateProgress(0, 'Resizing video...');
+
+            try {
+                const response = await fetch('/resize', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+                if (data.success) {
+                    updateProgress(100, 'Video resized successfully!');
+                    showOutput(`/output/${data.output_file}`);
+                } else {
+                    updateProgress(0, 'Error resizing video: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                updateProgress(0, 'Error resizing video');
+            }
+        }
+
+        async function changeSpeed() {
+            const videoToProcess = getVideoToProcess() || currentVideo;
+            if (!videoToProcess) {
+                alert('Please upload a video first');
+                return;
+            }
+
+            const speedFactor = document.getElementById('speedFactor').value;
+
+            const formData = new FormData();
+            formData.append('file', videoToProcess);
+            formData.append('speed_factor', speedFactor);
+
+            showProgress();
+            updateProgress(0, 'Changing video speed...');
+
+            try {
+                const response = await fetch('/change-speed', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    updateProgress(100, 'Video speed changed successfully!');
+                    showOutput(`/output/${result.output_file}`);
+                } else {
+                    updateProgress(0, `Error: ${result.error}`);
+                }
+            } catch (error) {
+                updateProgress(0, `Error: ${error.message}`);
+            }
+        }
+
+        async function extractAudio() {
+            const videoToProcess = getVideoToProcess() || currentVideo;
+            if (!videoToProcess) {
+                alert('Please upload a video first');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', videoToProcess);
+
+            showProgress();
+            updateProgress(0, 'Extracting audio...');
+
+            try {
+                const response = await fetch('/extract-audio', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    updateProgress(100, 'Audio extracted successfully!');
+                    showOutput(`/output/${result.output_file}`);
+                } else {
+                    updateProgress(0, `Error: ${result.error}`);
+                }
+            } catch (error) {
+                updateProgress(0, `Error: ${error.message}`);
+            }
+        }
+
+        // Handle using original or processed video
+        function getVideoToProcess() {
+            const useProcessedVideo = document.getElementById('useProcessedVideo');
+            if (useProcessedVideo && useProcessedVideo.checked && processedVideo) {
+                return processedVideo;
+            }
+            return processedVideo || currentVideo;
+        }
+
+        // Update showOutput to store processed video and update ongoing video state
+        function showOutput(url) {
+            const outputPreview = document.getElementById('outputPreview');
+            const downloadBtn = document.getElementById('downloadBtn');
+            
+            fetch(url)
+                .then(response => response.blob())
+                .then(blob => {
+                    const outName = url.split('/').pop() || 'processed_video.mp4';
+                    processedVideo = new File([blob], outName, { type: blob.type || 'video/mp4' });
+                    currentVideo = processedVideo; // Keep currentVideo synced to the latest ongoing video
+                    syncFeatureVideos(processedVideo);
+                    
+                    if (outputPreview) {
+                        outputPreview.src = url + '?t=' + new Date().getTime();
+                        outputPreview.style.display = 'block';
+                        outputPreview.load();
+                    }
+                    
+                    if (downloadBtn) {
+                        downloadBtn.href = url;
+                        downloadBtn.style.display = 'block';
+                        downloadBtn.download = outName;
+                    }
+
+                    const opt = document.getElementById('processedVideoOptions');
+                    if (opt) opt.style.display = 'block';
+                    const chk = document.getElementById('useProcessedVideo');
+                    if (chk) chk.checked = true;
+                })
+                .catch(error => {
+                    console.error('Error fetching processed video:', error);
+                    updateProgress(0, 'Error loading video. Please try again.');
+                });
+
+            showProgress(false);
+            updateProgress(100, 'Processing completed successfully!');
+        }
+
+        // Add this function to handle video errors
+        document.addEventListener('DOMContentLoaded', function() {
+            const outputPreview = document.getElementById('outputPreview');
+            if (outputPreview) {
+                outputPreview.addEventListener('error', function(e) {
+                    console.error('Video loading error:', e);
+                    updateProgress(0, 'Error loading video. Please try again.');
+                });
+            }
+        });
+
+        // Update the effect application functions to use getVideoToProcess
+        async function applyEffect() {
+            const videoToProcess = getVideoToProcess();
+            if (!videoToProcess) {
+                alert('Please upload a video first');
+                return;
+            }
+
+            const effectType = document.getElementById('effectType').value;
+
+            const formData = new FormData();
+            formData.append('file', videoToProcess);
+            formData.append('effect_type', effectType);
+
+            showProgress();
+            updateProgress(0, 'Applying effect...');
+
+            try {
+                const response = await fetch('/apply-effects', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    updateProgress(100, 'Effect applied successfully!');
+                    showOutput(`/output/${result.output_file}`);
+                } else {
+                    updateProgress(0, `Error: ${result.error}`);
+                }
+            } catch (error) {
+                updateProgress(0, `Error: ${error.message}`);
+            }
+        }
+
+        async function applyAnimation() {
+            const videoToProcess = getVideoToProcess();
+            if (!videoToProcess) {
+                alert('Please upload a video first');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', videoToProcess);
+            formData.append('animation_type', document.getElementById('animationType').value);
+            formData.append('duration', document.getElementById('animationDuration').value);
+
+            showProgress();
+            updateProgress(0, 'Applying animation...');
+
+            try {
+                const response = await fetch('/apply-animation', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    updateProgress(100, 'Animation applied successfully!');
+                    showOutput(`/output/${result.output_file}`);
+                } else {
+                    updateProgress(0, `Error: ${result.error}`);
+                }
+            } catch (error) {
+                updateProgress(0, `Error: ${error.message}`);
+            }
+        }
+// ...existing code...
+async function applyTransition() {
+    const filesInput = document.getElementById('transitionFiles');
+    const files = filesInput.files;
+    const transitionType = document.getElementById('transitionType').value;
+    const duration = document.getElementById('transitionDuration').value;
+
+    if (!files || files.length < 2) {
+        alert('Please select at least two videos for transition.');
+        return;
+    }
+
+    const formData = new FormData();
+    for (let i = 0; i < files.length; i++) {
+        formData.append('files[]', files[i]);
+    }
+    formData.append('transition_type', transitionType);
+    formData.append('duration', duration);
+
+    showProgress();
+    updateProgress(0, 'Applying transition...');
+
+    try {
+        const response = await fetch('/apply-transition', {
+            method: 'POST',
+            body: formData
+        });
+        const result = await response.json();
+
+        if (result.success) {
+            updateProgress(100, 'Transition applied successfully!');
+            showOutput(`/output/${result.output_file}`);
+        } else {
+            updateProgress(0, `Error: ${result.error}`);
+        }
+    } catch (error) {
+        updateProgress(0, `Error: ${error.message}`);
+    }
+}
+// ...existing code...
+        async function applySpeedRamping() {
+            const videoToProcess = getVideoToProcess();
+            if (!videoToProcess) {
+                alert('Please upload a video first');
+                return;
+            }
+
+            const targetSpeed = document.getElementById('targetSpeed').value;
+
+            const formData = new FormData();
+            formData.append('file', videoToProcess);
+            formData.append('target_speed', targetSpeed);
+
+            showProgress();
+            updateProgress(0, 'Applying speed ramping...');
+
+            try {
+                const response = await fetch('/apply-speed-ramping', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    updateProgress(100, 'Speed ramping applied successfully!');
+                    showOutput(`/output/${result.output_file}`);
+                } else {
+                    updateProgress(0, `Error: ${result.error}`);
+                }
+            } catch (error) {
+                updateProgress(0, `Error: ${error.message}`);
+            }
+        }
+async function processPrompt() {
+    console.log("Starting processPrompt function");  // Debug log
+
+    if (!currentVideo) {
+        console.log("No video selected");  // Debug log
+        alert('Please upload a video first');
+        return;
+    }
+
+    const prompt = document.getElementById('promptInput').value.trim();
+    console.log("Prompt:", prompt);  // Debug log
+
+    if (!prompt) {
+        console.log("Empty prompt");  // Debug log
+        alert('Please enter a command');
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', currentVideo);
+    formData.append('prompt', prompt);
+
+    console.log("Sending request to /process-prompt");  // Debug log
+    showProgress();
+    updateProgress(0, 'Processing video...');
+
+    try {
+        const response = await fetch('/process-prompt', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
+        console.log("Received response:", response.status);  // Debug log
+
+        // Check if response is JSON
+        const contentType = response.headers.get('content-type');
+if (!contentType || !contentType.includes('application/json')) {
+    // Not JSON, likely a login page or error
+    updateProgress(0, 'Error: Server did not return JSON. Please log in again.');
+    return;
+}
+
+        const result = await response.json();
+        console.log("Response data:", result);  // Debug log
+
+        if (result.success) {
+            console.log("Processing successful");  // Debug log
+            updateProgress(100, 'Video processed successfully!');
+            showOutput(`/output/${result.output_file}`);
+        } else {
+            console.log("Processing failed:", result.error);  // Debug log
+            updateProgress(0, `Error: ${result.error}`);
+        }
+    } catch (error) {
+        console.error("Error in processPrompt:", error);  // Debug log
+        updateProgress(0, `Error: ${error.message}`);
+    }
+}
+
+        function showPromptHelp() {
+            const basicCommands = document.getElementById('basicCommands');
+            const allCommands = document.getElementById('allCommands');
+            const button = event.target;
+            
+            if (allCommands.style.display === 'none') {
+                basicCommands.style.display = 'none';
+                allCommands.style.display = 'block';
+                button.textContent = 'Show Basic Commands';
+                button.className = 'btn btn-sm btn-secondary';
+            } else {
+                basicCommands.style.display = 'block';
+                allCommands.style.display = 'none';
+                button.textContent = 'Show All Commands';
+                button.className = 'btn btn-sm btn-info';
+            }
+        }
+
+        function handleMainVideoUpload(input) {
+            const file = input.files[0];
+            if (file) {
+                const preview = document.querySelector('#mainVideoPreview video');
+                const nameDisplay = document.getElementById('mainVideoName');
+                const uploadPlaceholder = document.getElementById('mainVideoUpload');
+                
+                // Update preview
+                preview.src = URL.createObjectURL(file);
+                nameDisplay.textContent = file.name;
+                document.getElementById('mainVideoPreview').style.display = 'block';
+                uploadPlaceholder.style.display = 'none';
+                
+                // Enable apply button if both videos are uploaded
+                checkOverlayReady();
+            }
+        }
+
+        function handleOverlayVideoUpload(input) {
+            const file = input.files[0];
+            if (file) {
+                const preview = document.querySelector('#overlayVideoPreview video');
+                const nameDisplay = document.getElementById('overlayVideoName');
+                const uploadPlaceholder = document.getElementById('overlayVideoUpload');
+                
+                // Update preview
+                preview.src = URL.createObjectURL(file);
+                nameDisplay.textContent = file.name;
+                document.getElementById('overlayVideoPreview').style.display = 'block';
+                uploadPlaceholder.style.display = 'none';
+                
+                // Enable apply button if both videos are uploaded
+                checkOverlayReady();
+            }
+        }
+
+        function checkOverlayReady() {
+            const mainVideo = document.getElementById('mainVideoInput').files[0];
+            const overlayVideo = document.getElementById('overlayVideoInput').files[0];
+            const applyButton = document.getElementById('applyOverlayBtn');
+            
+            applyButton.disabled = !(mainVideo && overlayVideo);
+        }
+
+        async function applyOverlay() {
+            const mainVideo = document.getElementById('mainVideoInput').files[0];
+            const overlayVideo = document.getElementById('overlayVideoInput').files[0];
+            const xPos = document.getElementById('overlayX').value;
+            const yPos = document.getElementById('overlayY').value;
+            
+            if (!mainVideo || !overlayVideo) {
+                alert('Please upload both videos first');
+                return;
+            }
+            
+            const formData = new FormData();
+            formData.append('file', mainVideo);
+            formData.append('overlay', overlayVideo);
+            formData.append('prompt', `overlay at ${xPos},${yPos}`);
+            
+            // Show progress
+            const progressBar = document.getElementById('overlayProgress');
+            const progressBarInner = progressBar.querySelector('.progress-bar');
+            const statusDiv = document.getElementById('overlayStatus');
+            progressBar.style.display = 'flex';
+            statusDiv.textContent = 'Processing...';
+            
+            try {
+                const response = await fetch('/process-prompt', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    progressBarInner.style.width = '100%';
+                    statusDiv.textContent = 'Processing complete!';
+                    
+                    // Show the output video in the preview area
+                    const outputPreview = document.getElementById('outputPreview');
+                    const outputUrl = `/output/${result.output_file}`;
+                    outputPreview.src = outputUrl + '?t=' + new Date().getTime(); // Add timestamp to prevent caching
+                    outputPreview.style.display = 'block';
+                    outputPreview.load(); // Force the video to load
+                    
+                    // Show download button
+                    const downloadBtn = document.getElementById('downloadBtn');
+                    downloadBtn.href = outputUrl;
+                    downloadBtn.style.display = 'block';
+                    downloadBtn.download = result.output_file;
+                    
+                    // Store the processed video for potential further processing
+                    fetch(outputUrl)
+                        .then(response => response.blob())
+                        .then(blob => {
+                            processedVideo = new File([blob], result.output_file, { type: 'video/mp4' });
+                            // Show the checkbox for using processed video
+                            document.getElementById('processedVideoOptions').style.display = 'block';
+                        });
+                    
+                    // Add download link in status div
+                    statusDiv.innerHTML += `<br><a href="${outputUrl}" class="btn btn-success mt-2" download>Download Result</a>`;
+                } else {
+                    throw new Error(result.error || 'Processing failed');
+                }
+            } catch (error) {
+                progressBar.style.display = 'none';
+                statusDiv.textContent = `Error: ${error.message}`;
+            }
+        }
+        // ...existing code...
+async function applyColorGrading() {
+    const videoToProcess = getVideoToProcess();
+    if (!videoToProcess) {
+        alert('Please upload a video first');
+        return;
+    }
+
+    const colorStyle = document.getElementById('colorStyle').value;
+
+    const formData = new FormData();
+    formData.append('file', videoToProcess);
+    formData.append('color_style', colorStyle);
+
+    showProgress();
+    updateProgress(0, 'Applying color grading...'); // <-- Progress message
+
+    try {
+        const response = await fetch('/apply-color-grading', {
+            method: 'POST',
+            body: formData
+        });
+        const result = await response.json();
+
+        if (result.success) {
+            updateProgress(100, 'Color grading applied successfully!');
+            showOutput(`/output/${result.output_file}`);
+        } else {
+            updateProgress(0, `Error: ${result.error}`);
+        }
+    } catch (error) {
+        updateProgress(0, `Error: ${error.message}`);
+    }
+}
+// ...existing code...
+
+        function searchPexelsClips() {
+            const scriptDescription = document.getElementById('pexelsScriptDescription').value.trim();
+            if (!scriptDescription) {
+                alert('Please enter a description');
+                return;
+            }
+            const formData = new FormData();
+            formData.append('script_description', scriptDescription);
+            fetch('/search-pexels-clips', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    displayPexelsResults(data.clips);
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while searching for Pexels clips');
+            });
+        }
+
+        function displayPexelsResults(clips) {
+            const resultsDiv = document.getElementById('pexelsResults');
+            const clipsList = document.getElementById('pexelsClipsList');
+            clipsList.innerHTML = '';
+            if (!clips.length) {
+                clipsList.innerHTML = '<div class="col-12">No clips found.</div>';
+            }
+            clips.forEach((clip, idx) => {
+                const clipCard = document.createElement('div');
+                clipCard.className = 'col-md-6 mb-4';
+                clipCard.innerHTML = `
+                    <div class="card h-100">
+                        <img src="${clip.thumbnail}" class="card-img-top" alt="Thumbnail" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <p class="card-text">By: ${clip.user}</p>
+                            <video controls style="width:100%; border-radius:8px;">
+                                <source src="${clip.url}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                            <div class="mt-2">
+                                <a href="${clip.url}" target="_blank" class="btn btn-primary btn-sm">Open Clip</a>
+                                <button class="btn btn-info btn-sm ms-2" onclick="downloadPexelsClip('${clip.url}')">
+                                    <i class="fas fa-download me-2"></i>Download
+                                </button>
+                                <button class="btn btn-success btn-sm ms-2" onclick="integratePexelsClip('${clip.url}')">Add to My Video</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                clipsList.appendChild(clipCard);
+            });
+            resultsDiv.style.display = 'block';
+        }
+
+        async function integratePexelsClip(clipUrl) {
+            if (!currentVideo) {
+                alert('Please upload a video first');
+                return;
+            }
+            const formData = new FormData();
+            formData.append('file', currentVideo);
+            formData.append('pexels_clip_url', clipUrl);
+            showProgress();
+            updateProgress(0, 'Merging with Pexels clip...');
+            try {
+                const response = await fetch('/merge-with-pexels', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                if (result.success) {
+                    updateProgress(100, 'Merged successfully!');
+                    showOutput(`/output/${result.output_file}`);
+                } else {
+                    updateProgress(0, `Error: ${result.error}`);
+                }
+            } catch (error) {
+                updateProgress(0, `Error: ${error.message}`);
+            }
+        }
+
+        // Add the downloadPexelsClip function
+        async function downloadPexelsClip(clipUrl) {
+            showProgress();
+            updateProgress(0, 'Downloading Pexels clip...');
+
+            try {
+                const response = await fetch('/download-pexels-clip', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({ clip_url: clipUrl })
+                });
+
+                // Check if response is JSON
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    // If not JSON, likely a redirect to login
+                    window.location.href = '/login';
+                    return;
+                }
+
+                const result = await response.json();
+                if (result.success) {
+                    updateProgress(100, 'Downloaded successfully!');
+                    showOutput(`/output/${result.filename}`);
+                    
+                    // Store the re-encoded filename for later use
+                    window.lastDownloadedPexelsFile = result.filename;
+                    
+                    // Add merge button to the output section
+                    const outputSection = document.querySelector('.output-section');
+                    const existingMergeBtn = document.getElementById('mergeWithVideoBtn');
+                    if (existingMergeBtn) {
+                        existingMergeBtn.remove();
+                    }
+                    
+                    const mergeButton = document.createElement('button');
+                    mergeButton.id = 'mergeWithVideoBtn';
+                    mergeButton.className = 'btn btn-success w-100 mt-3';
+                    mergeButton.innerHTML = '<i class="fas fa-link me-2"></i>Merge with My Video';
+                    mergeButton.onclick = () => integratePexelsClip(clipUrl);
+                    outputSection.appendChild(mergeButton);
+                } else {
+                    updateProgress(0, `Error: ${result.error}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                updateProgress(0, `Error: ${error.message}`);
+            }
+        }
+
+        async function searchYouTubeClips() {
+            const scriptDescription = document.getElementById('youtubeScriptDescription').value.trim();
+            if (!scriptDescription) {
+                alert('Please enter a description');
+                return;
+            }
+
+            showProgress();
+            updateProgress(0, 'Searching YouTube clips...');
+
+            try {
+                const response = await fetch('/search-youtube-clips', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({ script_description: scriptDescription })
+                });
+
+                // Check if we need to redirect to login
+                if (response.status === 401) {
+                    const data = await response.json();
+                    if (data.redirect) {
+                        window.location.href = data.redirect;
+                        return;
+                    }
+                }
+
+                // Check if response is JSON
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error('Server returned non-JSON response. Please log in again.');
+                }
+
+                const result = await response.json();
+                if (result.success) {
+                    displayYouTubeResults(result.clips);
+                    updateProgress(100, 'Search completed!');
+                } else {
+                    updateProgress(0, `Error: ${result.error}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                updateProgress(0, `Error: ${error.message}`);
+                // If we get a non-JSON response, redirect to login
+                if (error.message.includes('non-JSON response')) {
+                    window.location.href = '/login';
+                }
+            }
+        }
+
+        function displayYouTubeResults(clips) {
+            const resultsDiv = document.getElementById('youtubeResults');
+            const clipsContainer = document.getElementById('youtubeClipsContainer');
+            clipsContainer.innerHTML = '';
+
+            if (!clips || clips.length === 0) {
+                clipsContainer.innerHTML = '<div class="col-12">No clips found.</div>';
+                resultsDiv.style.display = 'block';
+                return;
+            }
+
+            clips.forEach(clip => {
+                const clipCard = document.createElement('div');
+                clipCard.className = 'col-md-6 mb-4';
+                clipCard.innerHTML = `
+                    <div class="card h-100">
+                        <img src="${clip.thumbnail}" class="card-img-top" alt="Thumbnail" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <h5 class="card-title">${clip.title}</h5>
+                            <p class="card-text">
+                                <small>By: ${clip.channel}</small><br>
+                                <small>Published: ${clip.published_at}</small>
+                            </p>
+                            <div class="mt-2 d-flex flex-wrap gap-2">
+                                <a href="${clip.watch_url}" target="_blank" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-play me-2"></i>Open Clip
+                                </a>
+                                <button class="btn btn-info btn-sm" onclick="downloadYouTubeClip('${clip.id}')">
+                                    <i class="fas fa-download me-2"></i>Download
+                                </button>
+                                <button class="btn btn-success btn-sm" onclick="addYouTubeToVideo('${clip.id}')">
+                                    <i class="fas fa-plus me-2"></i>Merge with My Video
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                clipsContainer.appendChild(clipCard);
+            });
+            resultsDiv.style.display = 'block';
+        }
+
+        async function downloadYouTubeClip(videoId) {
+            showProgress();
+            updateProgress(0, 'Downloading YouTube clip...');
+
+            try {
+                const response = await fetch('/download-youtube-clip', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({ video_id: videoId })
+                });
+
+                // Check if response is JSON
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    // If not JSON, likely a redirect to login
+                    window.location.href = '/login';
+                    return;
+                }
+
+                const result = await response.json();
+                if (result.success) {
+                    updateProgress(100, 'Downloaded successfully!');
+                    showOutput(`/output/${result.filename}`);
+                    
+                    // Store the re-encoded filename for later use
+                    window.lastDownloadedYouTubeFile = result.filename;
+                    
+                    // Add merge button to the output section
+                    const outputSection = document.querySelector('.output-section');
+                    const existingMergeBtn = document.getElementById('mergeWithVideoBtn');
+                    if (existingMergeBtn) {
+                        existingMergeBtn.remove();
+                    }
+                    
+                    const mergeButton = document.createElement('button');
+                    mergeButton.id = 'mergeWithVideoBtn';
+                    mergeButton.className = 'btn btn-success w-100 mt-3';
+                    mergeButton.innerHTML = '<i class="fas fa-link me-2"></i>Merge with My Video';
+                    mergeButton.onclick = () => addYouTubeToVideo(videoId);
+                    outputSection.appendChild(mergeButton);
+                } else {
+                    updateProgress(0, `Error: ${result.error}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                updateProgress(0, `Error: ${error.message}`);
+            }
+        }
+
+        async function addYouTubeToVideo(videoId) {
+            if (!currentVideo) {
+                alert('Please upload a video first');
+                return;
+            }
+
+            showProgress();
+            updateProgress(0, 'Processing YouTube video...');
+
+            try {
+                const formData = new FormData();
+                formData.append('file', currentVideo);
+                formData.append('video_id', videoId);
+
+                const response = await fetch('/add-youtube-to-video', {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: formData
+                });
+
+                // Check if we need to redirect to login
+                if (response.status === 401) {
+                    const data = await response.json();
+                    if (data.redirect) {
+                        window.location.href = data.redirect;
+                        return;
+                    }
+                }
+
+                const result = await response.json();
+                if (result.success) {
+                    updateProgress(100, 'Successfully added YouTube video!');
+                    showOutput(`/output/${result.output_file}`);
+                    
+                    // Update currentVideo with the merged video
+                    fetch(`/output/${result.output_file}`)
+                        .then(response => response.blob())
+                        .then(blob => {
+                            currentVideo = new File([blob], 'merged_video.mp4', { type: 'video/mp4' });
+                        });
+                } else {
+                    updateProgress(0, `Error: ${result.error}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                updateProgress(0, `Error: ${error.message}`);
+            }
+        }
+
+        // Add this function before any other JavaScript code
+        function formatDuration(seconds) {
+            try {
+                seconds = parseInt(seconds);
+                const hours = Math.floor(seconds / 3600);
+                const minutes = Math.floor((seconds % 3600) / 60);
+                const remainingSeconds = seconds % 60;
+                return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+            } catch (e) {
+                return "00:00:00";
+            }
+        }
+
+        // Dailymotion search function
+        async function searchDailymotionClips() {
+            const scriptDescription = document.getElementById('dailymotionScriptDescription').value.trim();
+            if (!scriptDescription) {
+                alert('Please enter a description');
+                return;
+            }
+
+            showProgress();
+            updateProgress(0, 'Searching Dailymotion clips...');
+
+            try {
+                const response = await fetch('/search-dailymotion-clips', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin',  // Include cookies in the request
+                    body: JSON.stringify({
+                        script_description: scriptDescription
+                    })
+                });
+
+                // Check if we need to redirect to login
+                if (response.status === 401) {
+                    const data = await response.json();
+                    if (data.redirect) {
+                        window.location.href = data.redirect;
+                        return;
+                    }
+                }
+
+                // Check if response is JSON
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    throw new Error('Server returned non-JSON response. Please log in again.');
+                }
+
+                const result = await response.json();
+                if (result.success) {
+                    displayDailymotionResults(result.clips);
+                    updateProgress(100, 'Search completed!');
+                } else {
+                    updateProgress(0, `Error: ${result.error}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                updateProgress(0, `Error: ${error.message}`);
+                // If we get a non-JSON response, redirect to login
+                if (error.message.includes('non-JSON response')) {
+                    window.location.href = '/login';
+                }
+            }
+        }
+
+        // Display Dailymotion search results
+        function displayDailymotionResults(clips) {
+            console.log('displayDailymotionResults called with clips:', clips);
+            const resultsDiv = document.getElementById('dailymotionResults');
+            const clipsContainer = document.getElementById('dailymotionClipsContainer');
+            clipsContainer.innerHTML = '';
+
+            if (!clips || clips.length === 0) {
+                clipsContainer.innerHTML = '<div class="col-12">No clips found.</div>';
+                resultsDiv.style.display = 'block';
+                console.log('No Dailymotion clips found or provided.');
+                return;
+            }
+
+            clips.forEach(clip => {
+                console.log('Processing Dailymotion clip:', clip.id, clip.title);
+                const clipCard = document.createElement('div');
+                clipCard.className = 'col-md-6 mb-4';
+                clipCard.innerHTML = `
+                    <div class="card h-100">
+                        <img src="${clip.thumbnail}" class="card-img-top" alt="Thumbnail" style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <h5 class="card-title">${clip.title}</h5>
+                            <p class="card-text">
+                                <small>By: ${clip.uploader}</small><br>
+                                <small>Duration: ${formatDuration(clip.duration)}</small><br>
+                                <small>Views: ${clip.view_count.toLocaleString()}</small>
+                            </p>
+                            <div class="mt-2 d-flex flex-wrap gap-2" id="dailymotionButtons_${clip.id}">
+                                <a href="${clip.watch_url}" target="_blank" class="btn btn-primary btn-sm">
+                                    <i class="fas fa-play me-2"></i>Open Clip
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                clipsContainer.appendChild(clipCard);
+
+                const buttonsContainer = document.getElementById(`dailymotionButtons_${clip.id}`);
+                if (buttonsContainer) {
+                    console.log('Buttons container found for clip:', clip.id);
+                    // Download button
+                    const downloadButton = document.createElement('button');
+                    downloadButton.className = 'btn btn-info btn-sm';
+                    downloadButton.innerHTML = '<i class="fas fa-download me-2"></i>Download';
+                    downloadButton.addEventListener('click', () => {
+                        console.log('Download button clicked for Dailymotion clip:', clip.id);
+                        downloadDailymotionClip(clip.id);
+                    });
+                    buttonsContainer.appendChild(downloadButton);
+
+                    // Add to My Video button
+                    const mergeButton = document.createElement('button');
+                    mergeButton.className = 'btn btn-success btn-sm ms-2';
+                    mergeButton.innerHTML = '<i class="fas fa-plus me-2"></i>Add to My Video';
+                    mergeButton.addEventListener('click', () => {
+                        console.log('Add to My Video button clicked for Dailymotion clip:', clip.id);
+                        addDailymotionToVideo(clip.id);
+                    });
+                    buttonsContainer.appendChild(mergeButton);
+                } else {
+                    console.error('Buttons container not found for clip:', clip.id);
+                }
+            });
+            resultsDiv.style.display = 'block';
+            console.log('Dailymotion results displayed.');
+        }
+
+        // Download Dailymotion clip
+        async function downloadDailymotionClip(videoId) {
+            showProgress();
+            updateProgress(0, 'Downloading Dailymotion clip...');
+
+            try {
+                const response = await fetch('/download-dailymotion-clip', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    credentials: 'same-origin',
+                    body: JSON.stringify({ video_id: videoId })
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    updateProgress(100, 'Downloaded successfully!');
+                    showOutput(`/output/${result.filename}`);
+                    
+                    // Store the re-encoded filename for later use
+                    window.lastDownloadedDailymotionFile = result.filename;
+                    
+                    // Add merge button to the output section
+                    const outputSection = document.querySelector('.output-section');
+                    const existingMergeBtn = document.getElementById('mergeWithVideoBtn');
+                    if (existingMergeBtn) {
+                        existingMergeBtn.remove();
+                    }
+                    
+                    const mergeButton = document.createElement('button');
+                    mergeButton.id = 'mergeWithVideoBtn';
+                    mergeButton.className = 'btn btn-success w-100 mt-3';
+                    mergeButton.innerHTML = '<i class="fas fa-link me-2"></i>Merge with My Video';
+                    mergeButton.onclick = () => addDailymotionToVideo(result.filename);
+                    outputSection.appendChild(mergeButton);
+                } else {
+                    updateProgress(0, `Error: ${result.error}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                updateProgress(0, `Error: ${error.message}`);
+            }
+        }
+
+        // Add Dailymotion clip to video
+        async function addDailymotionToVideo(dailymotionFilename) {
+            if (!currentVideo) {
+                alert('Please upload a video first');
+                return;
+            }
+
+            showProgress();
+            updateProgress(0, 'Processing Dailymotion video...');
+
+            try {
+                const formData = new FormData();
+                formData.append('video', currentVideo);
+                formData.append('dailymotion_filename', dailymotionFilename);
+
+                const response = await fetch('/add-dailymotion-to-video', {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: formData
+                });
+
+                const result = await response.json();
+                if (result.success) {
+                    updateProgress(100, 'Successfully added Dailymotion video!');
+                    showOutput(`/output/${result.filename}`);
+                    
+                    // Update currentVideo with the merged video
+                    fetch(`/output/${result.filename}`)
+                        .then(response => response.blob())
+                        .then(blob => {
+                            currentVideo = new File([blob], 'merged_video.mp4', { type: 'video/mp4' });
+                        });
+                } else {
+                    updateProgress(0, `Error: ${result.error}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                updateProgress(0, `Error: ${error.message}`);
+            }
+        }
+
+        // YouTube Download Functions
+        async function downloadYouTubeVideo() {
+            const urlInput = document.getElementById('youtubeDownloadUrl');
+            const url = urlInput.value.trim();
+            
+            if (!url) {
+                alert('Please enter a YouTube URL');
+                return;
+            }
+            
+            // Validate YouTube URL
+            const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)/;
+            if (!youtubeRegex.test(url)) {
+                alert('Please enter a valid YouTube URL');
+                return;
+            }
+            
+            const progressDiv = document.getElementById('downloadProgress');
+            const resultDiv = document.getElementById('downloadResult');
+            
+            // Show progress
+            progressDiv.style.display = 'block';
+            resultDiv.innerHTML = '';
+            
+            try {
+                const response = await fetch('/download_youtube', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: JSON.stringify({ url: url })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    resultDiv.innerHTML = `
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle me-2"></i>
+                            <strong>Download Successful!</strong><br>
+                            <strong>File:</strong> ${result.filename}<br>
+                            <strong>Size:</strong> ${result.size_mb || Math.round(result.file_size / (1024 * 1024))} MB<br>
+                            <a href="${result.download_path}" class="btn btn-sm btn-primary mt-2" target="_blank">
+                                <i class="fas fa-download me-1"></i>Download File
+                            </a>
+                        </div>
+                    `;
+                    
+                    // Clear the URL input
+                    urlInput.value = '';
+                    
+                    // Refresh the downloads list
+                    refreshDownloadsList();
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Download Failed:</strong> ${result.error}
+                            ${result.details ? `<br><small>${result.details}</small>` : ''}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Download error:', error);
+                resultDiv.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Error:</strong> Failed to download video. Please try again.
+                    </div>
+                `;
+            } finally {
+                progressDiv.style.display = 'none';
+            }
+        }
+        
+        async function refreshDownloadsList() {
+            const listDiv = document.getElementById('downloadsList');
+            
+            try {
+                listDiv.innerHTML = '<div class="text-muted"><i class="fas fa-spinner fa-spin me-2"></i>Loading...</div>';
+                
+                const response = await fetch('/list_downloads');
+                const result = await response.json();
+                
+                if (result.success && result.files.length > 0) {
+                    let html = '<div class="row">';
+                    
+                    result.files.forEach(file => {
+                        const createdDate = new Date(file.created * 1000).toLocaleString();
+                        html += `
+                            <div class="col-md-6 mb-3">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6 class="card-title text-truncate" title="${file.filename}">
+                                            <i class="fas fa-video me-2"></i>${file.filename}
+                                        </h6>
+                                        <p class="card-text small text-muted">
+                                            Size: ${file.size_mb} MB<br>
+                                            Downloaded: ${createdDate}
+                                        </p>
+                                        <a href="${file.download_url}" class="btn btn-sm btn-primary" target="_blank">
+                                            <i class="fas fa-download me-1"></i>Download
+                                        </a>
+                                        <button class="btn btn-sm btn-outline-success ms-2" 
+                                                onclick="useDownloadedVideo('${file.filename}')">
+                                            <i class="fas fa-edit me-1"></i>Use for Editing
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    
+                    html += '</div>';
+                    listDiv.innerHTML = html;
+                } else {
+                    listDiv.innerHTML = '<div class="text-muted">No downloaded videos found.</div>';
+                }
+            } catch (error) {
+                console.error('Error loading downloads:', error);
+                listDiv.innerHTML = '<div class="text-danger">Error loading downloads list.</div>';
+            }
+        }
+        
+        async function useDownloadedVideo(filename) {
+            try {
+                const response = await fetch(`/downloads/${encodeURIComponent(filename)}`);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const blob = await response.blob();
+                const mimeType = blob.type || 'video/mp4';
+                const file = new File([blob], filename, { type: mimeType });
+                currentVideo = file;
+                const objectUrl = URL.createObjectURL(file);
+                const preview = document.getElementById('videoPreview');
+                if (preview) {
+                    preview.src = objectUrl;
+                    preview.style.display = 'block';
+                }
+                syncFeatureVideos(file);
+                // Show success toast
+                const toast = document.createElement('div');
+                toast.textContent = `✓ "${filename}" loaded into editor`;
+                toast.style.cssText = 'position:fixed;bottom:20px;right:20px;background:#27ae60;color:white;padding:12px 20px;border-radius:8px;z-index:9999;font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,.3)';
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
+            } catch(e) {
+                alert('Error loading video: ' + e.message);
+            }
+        }
+    
+// ── Tab switching ──────────────────────────────────────────────
+
+
+// ══════════════════════════════════════════════════════════════
+// FEATURE 1 – MASKING
+// ══════════════════════════════════════════════════════════════
+let maskTool = 'rect', masks = [], drawing = false, maskStart = {x:0,y:0};
+let maskKeyframes = [], maskCanvas, maskCtx;
+
+if (document.getElementById('mask-upload-zone')) {
+    document.getElementById('mask-upload-zone').onclick = () => document.getElementById('mask-video-input').click();
+    document.getElementById('mask-video-input').onchange = function() {
+      const f = this.files[0]; if (!f) return;
+      const v = document.getElementById('mask-video');
+      v.src = URL.createObjectURL(f); v.style.display = 'block';
+      document.getElementById('mask-no-video').style.display = 'none';
+      initMaskCanvas();
+    };
+}
+
+function initMaskCanvas() {
+  maskCanvas = document.getElementById('mask-canvas');
+  maskCtx = maskCanvas.getContext('2d');
+  maskCanvas.width = maskCanvas.offsetWidth || 480;
+  maskCanvas.height = 280;
+  maskCanvas.onmousedown = maskMouseDown;
+  maskCanvas.onmousemove = maskMouseMove;
+  maskCanvas.onmouseup = maskMouseUp;
+  maskCanvas.ondblclick = maskDblClick;
+  renderMasks();
+}
+
+function setMaskTool(t, el) {
+  maskTool = t;
+  document.querySelectorAll('[id^=tool-]').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+}
+
+let polyPts = [];
+function maskMouseDown(e) {
+  const r = maskCanvas.getBoundingClientRect();
+  const x = (e.clientX - r.left) * (maskCanvas.width / r.width);
+  const y = (e.clientY - r.top) * (maskCanvas.height / r.height);
+  if (maskTool === 'polygon') { polyPts.push({x, y}); renderMasks(); return; }
+  drawing = true; maskStart = {x, y};
+  if (maskTool === 'freehand') masks.push({type:'freehand', pts:[{x,y}], opacity:+document.getElementById('mask-opacity').value/100, feather:+document.getElementById('mask-feather').value, color:document.getElementById('mask-color').value, blend:document.getElementById('mask-blend').value});
+}
+function maskMouseMove(e) {
+  if (!drawing) return;
+  const r = maskCanvas.getBoundingClientRect();
+  const x = (e.clientX - r.left) * (maskCanvas.width / r.width);
+  const y = (e.clientY - r.top) * (maskCanvas.height / r.height);
+  if (maskTool === 'freehand') { masks[masks.length-1].pts.push({x,y}); renderMasks(); }
+  else { renderMasks(); drawPreview(x, y); }
+}
+function maskMouseUp(e) {
+  if (!drawing) return; drawing = false;
+  const r = maskCanvas.getBoundingClientRect();
+  const x = (e.clientX - r.left) * (maskCanvas.width / r.width);
+  const y = (e.clientY - r.top) * (maskCanvas.height / r.height);
+  const opacity = +document.getElementById('mask-opacity').value/100;
+  const feather = +document.getElementById('mask-feather').value;
+  const color = document.getElementById('mask-color').value;
+  const blend = document.getElementById('mask-blend').value;
+  if (maskTool === 'rect') masks.push({type:'rect',x:maskStart.x,y:maskStart.y,w:x-maskStart.x,h:y-maskStart.y,opacity,feather,color,blend});
+  else if (maskTool === 'circle') masks.push({type:'circle',cx:maskStart.x,cy:maskStart.y,rx:Math.abs(x-maskStart.x),ry:Math.abs(y-maskStart.y),opacity,feather,color,blend});
+  renderMasks(); updateLayersList();
+}
+function maskDblClick() {
+  if (maskTool !== 'polygon' || polyPts.length < 2) return;
+  const opacity = +document.getElementById('mask-opacity').value/100;
+  const color = document.getElementById('mask-color').value;
+  const blend = document.getElementById('mask-blend').value;
+  masks.push({type:'polygon', pts:[...polyPts], opacity, color, blend});
+  polyPts = []; renderMasks(); updateLayersList();
+}
+function drawPreview(x, y) {
+  maskCtx.save();
+  maskCtx.setLineDash([4,4]);
+  maskCtx.strokeStyle = '#6c63ff';
+  maskCtx.lineWidth = 1.5;
+  if (maskTool === 'rect') maskCtx.strokeRect(maskStart.x, maskStart.y, x - maskStart.x, y - maskStart.y);
+  else if (maskTool === 'circle') { maskCtx.beginPath(); maskCtx.ellipse(maskStart.x, maskStart.y, Math.abs(x-maskStart.x), Math.abs(y-maskStart.y), 0, 0, Math.PI*2); maskCtx.stroke(); }
+  maskCtx.restore();
+}
+function renderMasks() {
+  if (!maskCtx) return;
+  maskCtx.clearRect(0, 0, maskCanvas.width, maskCanvas.height);
+  masks.forEach(m => {
+    maskCtx.save();
+    maskCtx.globalAlpha = m.opacity || 0.7;
+    maskCtx.globalCompositeOperation = blendMap(m.blend);
+    maskCtx.fillStyle = m.color || '#6c63ff';
+    if (m.feather > 0) maskCtx.filter = `blur(${m.feather}px)`;
+    if (m.type === 'rect') maskCtx.fillRect(m.x, m.y, m.w, m.h);
+    else if (m.type === 'circle') { maskCtx.beginPath(); maskCtx.ellipse(m.cx, m.cy, m.rx, m.ry, 0, 0, Math.PI*2); maskCtx.fill(); }
+    else if (m.type === 'freehand' || m.type === 'polygon') { maskCtx.beginPath(); m.pts.forEach((p,i) => i===0 ? maskCtx.moveTo(p.x,p.y) : maskCtx.lineTo(p.x,p.y)); maskCtx.closePath(); maskCtx.fill(); }
+    maskCtx.restore();
+  });
+  if (polyPts.length > 0) {
+    maskCtx.save(); maskCtx.strokeStyle='#00d2ff'; maskCtx.setLineDash([3,3]);
+    maskCtx.beginPath(); polyPts.forEach((p,i) => i===0 ? maskCtx.moveTo(p.x,p.y) : maskCtx.lineTo(p.x,p.y));
+    maskCtx.stroke(); maskCtx.restore();
+  }
+}
+function blendMap(b) { const m={Normal:'source-over',Multiply:'multiply',Screen:'screen',Overlay:'overlay','Color Dodge':'color-dodge','Color Burn':'color-burn'}; return m[b]||'source-over'; }
+function updateMaskProp() {
+  document.getElementById('mask-opacity-val').textContent = document.getElementById('mask-opacity').value + '%';
+  document.getElementById('mask-feather-val').textContent = document.getElementById('mask-feather').value + 'px';
+  renderMasks();
+}
+function updateLayersList() {
+  const el = document.getElementById('mask-layers');
+  if (!masks.length) { el.textContent = 'No masks drawn yet.'; return; }
+  el.innerHTML = masks.map((m, i) => `<div style="display:flex;justify-content:space-between;align-items:center;padding:.3rem 0;border-bottom:1px solid var(--border);font-size:.8rem"><span><span style="display:inline-block;width:10px;height:10px;background:${m.color};border-radius:2px;margin-right:.4rem"></span>Mask ${i+1} – ${m.type}</span><button class="btn btn-danger" style="padding:.1rem .4rem;font-size:.72rem" onclick="deleteMask(${i})">×</button></div>`).join('');
+}
+function deleteMask(i) { masks.splice(i, 1); renderMasks(); updateLayersList(); }
+function clearMasks() { masks = []; polyPts = []; renderMasks(); updateLayersList(); }
+async function exportMaskOverlay() {
+  if (!maskCanvas) return alert('Draw a mask first.');
+  const file = currentVideo;
+  if(!file) return alert('Upload a video first.');
+  if(!masks.length) return alert('No masks drawn. Use the drawing tools to draw a mask area first.');
+  
+  const formData = new FormData();
+  formData.append('file', file);
+  
+  // Send full mask data with coordinates (backend will map canvas→video coords)
+  // Include all drawn masks so they all get applied to the video
+  const masksWithCoords = masks.map(m => {
+    const base = { type: m.type, opacity: m.opacity, color: m.color, blend: m.blend || 'Normal' };
+    if (m.type === 'rect') {
+      return { ...base, x: m.x, y: m.y, w: m.w, h: m.h };
+    } else if (m.type === 'circle') {
+      return { ...base, cx: m.cx, cy: m.cy, rx: m.rx, ry: m.ry };
+    } else {
+      return { ...base, pts: m.pts };
+    }
+  });
+  formData.append('masks_json', JSON.stringify(masksWithCoords));
+  
+  showProgress(); updateProgress(0, `Applying ${masks.length} mask(s) on server...`);
+  try {
+    const res = await fetch('/apply-mask', {method:'POST', body:formData});
+    const result = await res.json();
+    if(result.success) {
+      updateProgress(100, 'Mask(s) applied!');
+      showOutput(`/output/${result.output_file}`);
+    } else { updateProgress(0, `Error: ${result.error}`); }
+  } catch(e) { updateProgress(0, `Error: ${e.message}`); }
+}
+function addMaskKeyframe() {
+  // Use video current time instead of Date.now() % 10000
+  const maskVid = document.getElementById('mask-video');
+  const t = (maskVid && maskVid.duration) ? Math.round(maskVid.currentTime * 1000) : Date.now() % 10000;
+  maskKeyframes.push({t, masks: JSON.stringify(masks)});
+  const el = document.getElementById('mask-keyframe-list');
+  el.innerHTML = maskKeyframes.map((kf,i) => `<div style="font-size:.78rem;padding:.2rem 0;border-bottom:1px solid var(--border)">KF ${i+1} @ ${(kf.t/1000).toFixed(2)}s</div>`).join('');
+  drawMaskTimeline();
+}
+
+function toggleMaskLayer() {
+  // Toggle visibility of the selected/last mask layer
+  const btn = document.getElementById('mask-toggle-btn');
+  if (!masks.length) return;
+  // Find selected mask (last drawn if none selected)
+  const targetIdx = masks.length - 1;
+  const m = masks[targetIdx];
+  if (!m) return;
+  m._hidden = !m._hidden;
+  // Update opacity for hidden state
+  m._savedOpacity = m._savedOpacity !== undefined ? m._savedOpacity : m.opacity;
+  if (m._hidden) {
+    m.opacity = 0;
+    btn.innerHTML = '<i class="fas fa-eye-slash"></i> Toggle';
+    btn.style.color = 'var(--accent2)';
+  } else {
+    m.opacity = m._savedOpacity;
+    btn.innerHTML = '<i class="fas fa-eye"></i> Toggle';
+    btn.style.color = 'var(--muted)';
+  }
+  renderMasks();
+  updateLayersList();
+}
+function drawMaskTimeline() {
+  const c = document.getElementById('mask-timeline-canvas');
+  const ctx = c.getContext('2d'); ctx.clearRect(0,0,c.width,c.height);
+  ctx.fillStyle='var(--border)';
+  maskKeyframes.forEach((kf,i) => { const x = (i/(maskKeyframes.length||1))*(c.width-20)+10; ctx.beginPath(); ctx.arc(x,24,6,0,Math.PI*2); ctx.fillStyle='#6c63ff'; ctx.fill(); });
+}
+
+// ══════════════════════════════════════════════════════════════
+// FEATURE 2 – AUTO-CUT
+// ══════════════════════════════════════════════════════════════
+let acMarks = [], acVideo, acTlCanvas, acTlCtx, acAutoCuts = [];
+
+if (document.getElementById('ac-upload-zone')) {
+    document.getElementById('ac-upload-zone').onclick = () => document.getElementById('ac-video-input').click();
+    document.getElementById('ac-video-input').onchange = function() {
+      const f = this.files[0]; if (!f) return;
+      acVideo = document.getElementById('ac-video');
+      acVideo.src = URL.createObjectURL(f); acVideo.style.display = 'block';
+      acVideo.ontimeupdate = acUpdateCursor;
+      acTlCanvas = document.getElementById('ac-timeline');
+      acTlCtx = acTlCanvas.getContext('2d');
+      acTlCanvas.width = acTlCanvas.offsetWidth || 600;
+      acTlCanvas.onclick = acTimelineClick;
+      acVideo.onloadedmetadata = acDrawTimeline;
+    };
+}
+function acDrawTimeline() {
+  if (!acTlCtx) return;
+  const W = acTlCanvas.width, H = 54;
+  acTlCtx.clearRect(0,0,W,H);
+  acTlCtx.fillStyle = '#1a1d27'; acTlCtx.fillRect(0,0,W,H);
+  const dur = acVideo.duration || 1;
+  // Draw segment highlights
+  for (let i=0; i<acMarks.length-1; i+=2) {
+    const x1 = (acMarks[i].t/dur)*W, x2 = (acMarks[i+1].t/dur)*W;
+    acTlCtx.fillStyle = 'rgba(108,99,255,.25)'; acTlCtx.fillRect(x1,0,x2-x1,H);
+  }
+  // Draw marks
+  acMarks.forEach((m, idx) => {
+    const x = (m.t/dur)*W;
+    acTlCtx.fillStyle = idx%2===0 ? '#22c55e' : '#ef4444';
+    acTlCtx.fillRect(x-1,0,2,H);
+    acTlCtx.fillStyle = '#fff'; acTlCtx.font='10px Inter';
+    acTlCtx.fillText(m.label, x+3, 14);
+  });
+}
+function acTimelineClick(e) {
+  if (!acVideo || !acVideo.duration) return;
+  const r = acTlCanvas.getBoundingClientRect();
+  const x = e.clientX - r.left;
+  const t = (x / r.width) * acVideo.duration;
+  acVideo.currentTime = t;
+}
+function acUpdateCursor() {
+  if (!acVideo.duration) return;
+  const cursor = document.getElementById('ac-cursor');
+  const W = acTlCanvas ? acTlCanvas.getBoundingClientRect().width : 600;
+  cursor.style.left = ((acVideo.currentTime / acVideo.duration) * W) + 'px';
+  acDrawTimeline();
+}
+function acAddMark() {
+  if (!acVideo || !acVideo.src) return alert('Upload a video first.');
+  const t = acVideo.currentTime;
+  const idx = acMarks.length;
+  const label = idx%2===0 ? `Start ${Math.floor(idx/2)+1}` : `End ${Math.floor(idx/2)+1}`;
+  acMarks.push({id:'m'+idx, t, label});
+  acMarks.sort((a,b)=>a.t-b.t);
+  document.getElementById('ac-mark-count').textContent = acMarks.length;
+  acRenderMarkTable(); acDrawTimeline();
+}
+function acRenderMarkTable() {
+  const tb = document.getElementById('ac-marks-body'); tb.innerHTML='';
+  acMarks.forEach((m,i) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${i+1}</td><td><input type="text" value="${m.label}" style="width:100%;background:transparent;border:none;color:var(--text);font-size:.82rem" onchange="acMarks[${i}].label=this.value;acDrawTimeline()"></td><td style="white-space:nowrap">${fmtTime(m.t)}</td><td><button class="btn btn-danger" style="padding:.1rem .4rem;font-size:.72rem" onclick="acDeleteMark(${i})">×</button></td>`;
+    tb.appendChild(tr);
+  });
+}
+function acDeleteMark(i) { acMarks.splice(i,1); document.getElementById('ac-mark-count').textContent=acMarks.length; acRenderMarkTable(); acDrawTimeline(); }
+function acClearMarks() { acMarks=[]; acAutoCuts=[]; document.getElementById('ac-mark-count').textContent=0; acRenderMarkTable(); acDrawTimeline(); document.getElementById('ac-clips-list').textContent='Run Auto-Cut to see clips here.'; }
+async function acAutoCut() {
+  if (acMarks.length < 2) return alert('Add at least 2 marks (a start and end pair).');
+  acAutoCuts = [];
+  for (let i=0; i<acMarks.length-1; i+=2) {
+    if (!acMarks[i+1]) break;
+    const s = acMarks[i].t, e = acMarks[i+1].t;
+    acAutoCuts.push({clipId:`clip_${i/2+1}`, start:s, end:e, label:`Clip ${i/2+1}`, duration:e-s});
+  }
+  const el = document.getElementById('ac-clips-list');
+  if (!acAutoCuts.length) { el.innerHTML='<div class="alert alert-danger">Marks must be paired (even number of marks).</div>'; return; }
+  el.innerHTML = acAutoCuts.map((c,i) => `<div style="background:var(--surface2);border-radius:8px;padding:.6rem .8rem;margin-bottom:.5rem;font-size:.83rem"><strong style="color:var(--accent)">${c.label}</strong> <span style="color:var(--muted)">${fmtTime(c.start)} → ${fmtTime(c.end)}</span> <span class="badge badge-accent">${c.duration.toFixed(1)}s</span></div>`).join('');
+  document.getElementById('ac-export-row').style.display='flex';
+
+  const file = currentVideo;
+  if(!file) return;
+  const formData = new FormData();
+  formData.append('file', file);
+  const backendMarks = acMarks.map(m => ({time: m.t}));
+  formData.append('marks', JSON.stringify(backendMarks));
+  
+  showProgress();
+  updateProgress(0, 'Auto-cutting video on server...');
+  try {
+    const res = await fetch('/auto-cut', {method:'POST', body:formData});
+    const result = await res.json();
+    if(result.success) {
+      updateProgress(100, 'Auto-cut successful!');
+      showOutput(`/output/${result.output_file}`);
+    } else { updateProgress(0, `Error: ${result.error}`); }
+  } catch(e) { updateProgress(0, `Error: ${e.message}`); }
+}
+function acExportJSON() {
+  const data = {marks:acMarks, autocuts:acAutoCuts};
+  const a = document.createElement('a'); a.download='autocut_data.json';
+  a.href = 'data:application/json,' + encodeURIComponent(JSON.stringify(data,null,2)); a.click();
+}
+function fmtTime(s) { const m=Math.floor(s/60); return `${m}:${(s%60).toFixed(2).padStart(5,'0')}`; }
+
+// setPresetMarks: set auto-cut marks from preset time pairs (in seconds)
+function setPresetMarks(pairsInSeconds) {
+  if (!acVideo || !acVideo.src) return alert('Upload a video first.');
+  const dur = acVideo.duration || 0;
+  // Validate times are within video duration
+  const valid = pairsInSeconds.filter(t => t >= 0 && (dur === 0 || t <= dur));
+  if (valid.length < 2) return alert('Video is too short for this preset.');
+  acMarks = [];
+  valid.forEach((t, idx) => {
+    const label = idx % 2 === 0 ? `Start ${Math.floor(idx/2)+1}` : `End ${Math.floor(idx/2)+1}`;
+    acMarks.push({ id: 'm' + idx, t: t, label });
+  });
+  document.getElementById('ac-mark-count').textContent = acMarks.length;
+  acRenderMarkTable();
+  acDrawTimeline();
+}
+
+// ══════════════════════════════════════════════════════════════
+// FEATURE 3 – AUDIO EFFECTS
+// ══════════════════════════════════════════════════════════════
+let audioCtx=null, audioSource=null, audioChain=[], selectedEffect=null, analyserNode=null, analyserRAF=null;
+
+// Audio upload zone removed
+
+const EFFECT_DEFS = {
+  volume: { label:'Volume', params:[{id:'gain',label:'Gain',min:0,max:3,step:.01,default:1}] },
+  eq: { label:'3-Band EQ', params:[{id:'low',label:'Low (Hz)',min:-12,max:12,step:1,default:0},{id:'mid',label:'Mid (Hz)',min:-12,max:12,step:1,default:0},{id:'high',label:'High (Hz)',min:-12,max:12,step:1,default:0}] },
+  reverb: { label:'Reverb', params:[{id:'wet',label:'Wet/Dry',min:0,max:1,step:.01,default:.3},{id:'decay',label:'Decay (s)',min:.1,max:10,step:.1,default:2}] },
+  delay: { label:'Delay', params:[{id:'time',label:'Delay Time (s)',min:0,max:2,step:.01,default:.3},{id:'feedback',label:'Feedback',min:0,max:.9,step:.01,default:.3}] },
+  compressor: { label:'Compressor', params:[{id:'threshold',label:'Threshold (dB)',min:-60,max:0,step:1,default:-24},{id:'ratio',label:'Ratio',min:1,max:20,step:.5,default:4}] },
+  filter: { label:'High-Pass Filter', params:[{id:'freq',label:'Cutoff (Hz)',min:20,max:8000,step:10,default:200},{id:'q',label:'Q Factor',min:.1,max:10,step:.1,default:1}] }
+};
+
+function audioAddEffect(type) {
+  const def = EFFECT_DEFS[type]; if(!def) return;
+  const id = type+'_'+Date.now();
+  const params = {}; def.params.forEach(p => params[p.id] = p.default);
+  audioChain.push({id, type, label:def.label, params, bypassed:false});
+  audioRenderChain();
+}
+function audioRenderChain() {
+  const el = document.getElementById('audio-chain');
+  if (!audioChain.length) { el.innerHTML='<span style="color:var(--muted);font-size:.8rem">No effects added yet.</span>'; return; }
+  el.innerHTML = audioChain.map((e,i) => `<button class="tag ${selectedEffect===e.id?'active':''}" onclick="audioSelectEffect('${e.id}')" style="${e.bypassed?'opacity:.4':''}"><i class="fas fa-plug"></i> ${e.label}</button>`).join('');
+}
+function audioSelectEffect(id) {
+  selectedEffect = id;
+  const e = audioChain.find(x=>x.id===id);
+  if (!e) return;
+  const def = EFFECT_DEFS[e.type];
+  document.getElementById('audio-effect-name').textContent = e.label;
+  document.getElementById('audio-bypass').checked = e.bypassed;
+  document.getElementById('audio-effect-controls').innerHTML = def.params.map(p => `<div class="mb-2"><label>${p.label}</label><div class="slider-row"><input type="range" id="ep_${p.id}" min="${p.min}" max="${p.max}" step="${p.step}" value="${e.params[p.id]}" oninput="audioUpdateParam('${e.id}','${p.id}',this.value);document.getElementById('ev_${p.id}').textContent=this.value"><span id="ev_${p.id}">${e.params[p.id]}</span></div></div>`).join('');
+  document.getElementById('audio-no-effect').style.display='none';
+  document.getElementById('audio-effect-params').style.display='block';
+  audioRenderChain();
+}
+function audioUpdateParam(id,param,val) { const e=audioChain.find(x=>x.id===id); if(e) e.params[param]=+val; }
+function audioToggleBypass() { const e=audioChain.find(x=>x.id===selectedEffect); if(e) { e.bypassed=document.getElementById('audio-bypass').checked; audioRenderChain(); } }
+function audioRemoveEffect() { audioChain=audioChain.filter(x=>x.id!==selectedEffect); selectedEffect=null; audioRenderChain(); document.getElementById('audio-no-effect').style.display='block'; document.getElementById('audio-effect-params').style.display='none'; }
+function audioSavePreset() { const data={chain:audioChain}; const a=document.createElement('a'); a.download='audio_preset.json'; a.href='data:application/json,'+encodeURIComponent(JSON.stringify(data,null,2)); a.click(); }
+
+async function audioRenderVideoEffect() {
+  const file = currentVideo;
+  if(!file) return alert('Upload an audio/video file first');
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('effects', JSON.stringify(audioChain.filter(e=>!e.bypassed).map(e=>({type:e.type, ...e.params}))));
+  
+  showProgress();
+  updateProgress(0, 'Applying audio effects...');
+  try {
+    const res = await fetch('/apply-audio-effects', {method:'POST', body:formData});
+    const result = await res.json();
+    if(result.success) {
+      updateProgress(100, 'Audio Processing completed!');
+      showOutput(`/output/${result.output_file}`);
+    } else { updateProgress(0, `Error: ${result.error}`); }
+  } catch(e) { updateProgress(0, `Error: ${e.message}`); }
+}
+
+function audioPlayWithEffects() {
+  const vEl = document.getElementById('audio-video-player').style.display!=='none' ? document.getElementById('audio-video-player') : document.getElementById('audio-player');
+  if (!vEl.src) return alert('Upload an audio/video file first.');
+  if (!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+  
+  window.__audioSourceNodes = window.__audioSourceNodes || new WeakMap();
+  if (!window.__audioSourceNodes.has(vEl)) {
+     window.__audioSourceNodes.set(vEl, audioCtx.createMediaElementSource(vEl));
+  }
+  audioSource = window.__audioSourceNodes.get(vEl);
+  try{ audioSource.disconnect(); }catch(e){}
+  
+  let node = audioSource;
+  analyserNode = audioCtx.createAnalyser(); analyserNode.fftSize=128;
+  audioChain.filter(e=>!e.bypassed).forEach(e => {
+    let n;
+    if (e.type==='volume') { n=audioCtx.createGain(); n.gain.value=e.params.gain; }
+    else if (e.type==='eq') {
+      const lo=audioCtx.createBiquadFilter(); lo.type='lowshelf'; lo.frequency.value=320; lo.gain.value=e.params.low;
+      const mi=audioCtx.createBiquadFilter(); mi.type='peaking'; mi.frequency.value=1000; mi.gain.value=e.params.mid;
+      const hi=audioCtx.createBiquadFilter(); hi.type='highshelf'; hi.frequency.value=3200; hi.gain.value=e.params.high;
+      node.connect(lo); lo.connect(mi); mi.connect(hi); node=hi; return;
+    }
+    else if (e.type==='reverb') { n=audioCtx.createConvolver(); }
+    else if (e.type==='delay') { n=audioCtx.createDelay(2); n.delayTime.value=e.params.time; }
+    else if (e.type==='compressor') { n=audioCtx.createDynamicsCompressor(); n.threshold.value=e.params.threshold; n.ratio.value=e.params.ratio; }
+    else if (e.type==='filter') { n=audioCtx.createBiquadFilter(); n.type='highpass'; n.frequency.value=e.params.freq; n.Q.value=e.params.q; }
+    if(n){node.connect(n); node=n;}
+  });
+  node.connect(analyserNode); analyserNode.connect(audioCtx.destination);
+  vEl.play(); drawAnalyser();
+}
+function audioStop() {
+  const v1=document.getElementById('audio-video-player'), v2=document.getElementById('audio-player');
+  v1.pause(); v2.pause();
+  if(analyserRAF){cancelAnimationFrame(analyserRAF); analyserRAF=null;}
+}
+function drawAnalyser() {
+  const c=document.getElementById('audio-analyzer-canvas');
+  if(!c||!analyserNode){return;}
+  const ctx=c.getContext('2d'); const W=c.offsetWidth||400; c.width=W;
+  const buf=new Uint8Array(analyserNode.frequencyBinCount);
+  function frame(){ analyserRAF=requestAnimationFrame(frame);
+    analyserNode.getByteFrequencyData(buf);
+    ctx.clearRect(0,0,W,c.height);
+    const barW=W/buf.length;
+    buf.forEach((v,i)=>{ const h=(v/255)*c.height; ctx.fillStyle=`hsl(${240+i*(120/buf.length)},80%,60%)`; ctx.fillRect(i*barW,c.height-h,barW-1,h); });
+  } frame();
+}
+
+// ══════════════════════════════════════════════════════════════
+// FEATURE 4 – KEYFRAMES
+// ══════════════════════════════════════════════════════════════
+let kfData={opacity:[],positionX:[],positionY:[],scale:[],rotation:[],blur:[]};
+let kfProp='opacity', kfSelected=null, kfZoom=1, kfGraphDuration=5000;
+
+// KF upload zone removed
+
+function kfSelectProperty() { kfProp=document.getElementById('kf-property').value; kfRenderTimeline(); kfRenderGraph(); }
+
+function kfRenderTimeline() {
+  const c=document.getElementById('kf-timeline'); if(!c)return;
+  const ctx=c.getContext('2d'); c.width=c.offsetWidth||600; const W=c.width,H=48;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#1a1d27'; ctx.fillRect(0,0,W,H);
+  // ruler lines
+  for(let i=0;i<=10;i++){const x=i*(W/10);ctx.strokeStyle='#2d3255';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  const kfs=kfData[kfProp]||[];
+  kfs.forEach(kf=>{
+    const x=(kf.time/kfGraphDuration)*W;
+    ctx.beginPath(); ctx.arc(x,H/2,7,0,Math.PI*2);
+    ctx.fillStyle=kf===kfSelected?'#00d2ff':'#6c63ff'; ctx.fill();
+    ctx.fillStyle='#fff'; ctx.font='9px Inter';
+    ctx.fillText(kf.value.toFixed(1),x-8,H-4);
+  });
+  c.onclick=e=>{
+    const r=c.getBoundingClientRect(); const xRel=(e.clientX-r.left);
+    const t=Math.round((xRel/r.width)*kfGraphDuration/100)*100;
+    const hit=kfs.find(k=>Math.abs((k.time/kfGraphDuration)*c.width - xRel)<10);
+    if(hit){kfSelected=hit; kfShowInspector();}
+    kfRenderTimeline(); kfRenderGraph();
+  };
+}
+
+function kfShowInspector(){
+  if(!kfSelected){document.getElementById('kf-no-sel').style.display='block';document.getElementById('kf-inspector').style.display='none';return;}
+  document.getElementById('kf-no-sel').style.display='none';
+  document.getElementById('kf-inspector').style.display='block';
+  document.getElementById('kf-time').value=kfSelected.time;
+  document.getElementById('kf-value').value=kfSelected.value;
+  document.getElementById('kf-easing').value=kfSelected.easing;
+}
+function kfAddKeyframe(){
+  const kfs=kfData[kfProp];
+  const t=kfs.length?kfs[kfs.length-1].time+500:0;
+  const defaults={opacity:1,positionX:0,positionY:0,scale:1,rotation:0,blur:0};
+  const kf={time:t,value:defaults[kfProp],easing:'linear'};
+  kfs.push(kf); kfs.sort((a,b)=>a.time-b.time);
+  kfGraphDuration=Math.max(kfGraphDuration, t+500);
+  kfSelected=kf; kfShowInspector(); kfRenderTimeline(); kfRenderGraph(); kfRenderList();
+}
+function kfUpdateSelected(){
+  if(!kfSelected)return;
+  kfSelected.time=+document.getElementById('kf-time').value;
+  kfSelected.value=+document.getElementById('kf-value').value;
+  kfSelected.easing=document.getElementById('kf-easing').value;
+  kfData[kfProp].sort((a,b)=>a.time-b.time);
+  kfRenderTimeline(); kfRenderGraph(); kfRenderList();
+}
+
+function kfLoadPreset(type) {
+  kfGraphDuration = 3000;
+  if(type === 'fade'){ document.getElementById('kf-property').value='opacity'; kfProp='opacity'; kfData[kfProp] = [{time:0, value:1, easing:'linear'}, {time:3000, value:0, easing:'easeOut'}]; }
+  if(type === 'zoom'){ document.getElementById('kf-property').value='scale'; kfProp='scale'; kfData[kfProp] = [{time:0, value:1, easing:'linear'}, {time:3000, value:1.5, easing:'easeInOut'}]; }
+  if(type === 'spin'){ document.getElementById('kf-property').value='rotation'; kfProp='rotation'; kfData[kfProp] = [{time:0, value:0, easing:'linear'}, {time:3000, value:360, easing:'easeInOut'}]; }
+  kfSelected = kfData[kfProp][0];
+  kfShowInspector(); kfRenderTimeline(); kfRenderGraph(); kfRenderList();
+}
+function kfSetEasing(e){document.getElementById('kf-easing').value=e; if(kfSelected){kfSelected.easing=e; kfRenderGraph();}}
+function kfDelete(){if(!kfSelected)return; kfData[kfProp]=kfData[kfProp].filter(k=>k!==kfSelected); kfSelected=null; kfShowInspector(); kfRenderTimeline(); kfRenderGraph(); kfRenderList();}
+function kfPrev(){const kfs=kfData[kfProp];if(!kfs.length)return;const i=kfs.indexOf(kfSelected);kfSelected=kfs[Math.max(0,i-1)];kfShowInspector();kfRenderTimeline();}
+function kfNext(){const kfs=kfData[kfProp];if(!kfs.length)return;const i=kfs.indexOf(kfSelected);kfSelected=kfs[Math.min(kfs.length-1,i+1)];kfShowInspector();kfRenderTimeline();}
+function kfZoomIn(){kfZoom=Math.min(kfZoom*1.5,8);kfRenderGraph();}
+function kfZoomOut(){kfZoom=Math.max(kfZoom/1.5,.5);kfRenderGraph();}
+function kfResetView(){kfZoom=1;kfRenderGraph();}
+
+async function kfApplyToVideo() {
+  const kfs = kfData[kfProp];
+  if(!kfs || kfs.length === 0) return alert('Add some keyframes first.');
+  
+  let videoFile = currentVideo;
+  if(!videoFile) return alert('Please upload a video in the main editor first.');
+  
+  const formData = new FormData();
+  formData.append('file', videoFile);
+  formData.append('keyframes', JSON.stringify(kfs));
+  formData.append('property', kfProp);  // Tell backend which property to animate
+  
+  showProgress(); updateProgress(0, 'Applying keyframes...');
+  try {
+    const res = await fetch('/apply-keyframes', {method:'POST', body:formData});
+    const result = await res.json();
+    if(result.success) {
+      updateProgress(100, 'Keyframes applied!');
+      showOutput(`/output/${result.output_file}`);
+    } else { updateProgress(0, `Error: ${result.error}`); }
+  } catch(e) { updateProgress(0, `Error: ${e.message}`); }
+}
+
+function kfRenderGraph(){
+  const c=document.getElementById('kf-graph'); if(!c)return;
+  const ctx=c.getContext('2d'); c.width=c.offsetWidth||500; const W=c.width,H=220;
+  ctx.clearRect(0,0,W,H); ctx.fillStyle='#0a0c13'; ctx.fillRect(0,0,W,H);
+  // Grid
+  for(let i=0;i<=10;i++){const x=i*(W/10);ctx.strokeStyle='#1e2235';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let i=0;i<=5;i++){const y=i*(H/5);ctx.strokeStyle='#1e2235';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  const kfs=kfData[kfProp]; if(kfs.length<2)return;
+  const minV=Math.min(...kfs.map(k=>k.value));
+  const maxV=Math.max(...kfs.map(k=>k.value))||1;
+  const range=maxV-minV||1;
+  const tx=t=>(t/kfGraphDuration)*W*kfZoom;
+  const ty=v=>H-((v-minV)/range)*(H-20)-10;
+  ctx.beginPath(); ctx.strokeStyle='#6c63ff'; ctx.lineWidth=2;
+  kfs.forEach((kf,i)=>{
+    const x=tx(kf.time),y=ty(kf.value);
+    if(i===0) ctx.moveTo(x,y);
+    else {const prev=kfs[i-1]; const cpX=(tx(prev.time)+x)/2; ctx.bezierCurveTo(cpX,ty(prev.value),cpX,y,x,y);}
+  });
+  ctx.stroke();
+  kfs.forEach(kf=>{
+    ctx.beginPath(); ctx.arc(tx(kf.time),ty(kf.value),6,0,Math.PI*2);
+    ctx.fillStyle=kf===kfSelected?'#00d2ff':'#6c63ff'; ctx.fill();
+  });
+}
+
+function kfRenderList(){
+  const kfs=kfData[kfProp];
+  const el=document.getElementById('kf-list');
+  if(!kfs.length){el.textContent='No keyframes yet. Click the timeline to add one.';return;}
+  el.innerHTML=kfs.map((k,i)=>`<div style="font-size:.8rem;padding:.25rem 0;border-bottom:1px solid var(--border);cursor:pointer;color:${k===kfSelected?'var(--accent)':'var(--text)'}" onclick="kfSelected=kfData[kfProp][${i}];kfShowInspector();kfRenderTimeline();kfRenderGraph()"><strong>${(k.time/1000).toFixed(2)}s</strong> → ${k.value} <span class="chip">${k.easing}</span></div>`).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+// FEATURE 5 – MOTION BLUR
+// ══════════════════════════════════════════════════════════════
+let mbVideo, mbCanvas, mbCtx, mbFrameCaptured=false;
+
+// MB upload zone removed
+function mbUpdateVal(el,spanId,suffix){document.getElementById(spanId).textContent=el.value+suffix;}
+function mbReset(){document.getElementById('mb-dir').value=0;document.getElementById('mb-strength').value=40;document.getElementById('mb-thresh').value=20;document.getElementById('mb-dir-val').textContent='0°';document.getElementById('mb-str-val').textContent='40%';document.getElementById('mb-thresh-val').textContent='20%';mbPreview();}
+
+async function mbApplyToVideo() {
+  const file = currentVideo;
+  if(!file) return alert('Upload a video first.');
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('strength', document.getElementById('mb-strength').value);
+  
+  showProgress(); updateProgress(0, 'Applying motion blur...');
+  try {
+    const res = await fetch('/apply-motion-blur', {method:'POST', body:formData});
+    const result = await res.json();
+    if(result.success) {
+      updateProgress(100, 'Motion blur applied!');
+      showOutput(`/output/${result.output_file}`);
+    } else { updateProgress(0, `Error: ${result.error}`); }
+  } catch(e) { updateProgress(0, `Error: ${e.message}`); }
+}
+
+function mbPreview(){
+  if(!mbVideo||!mbVideo.readyState){return;}
+  mbCanvas.width=mbCanvas.offsetWidth||500; mbCanvas.height=280;
+  mbCtx.clearRect(0,0,mbCanvas.width,mbCanvas.height);
+  mbCtx.drawImage(mbVideo,0,0,mbCanvas.width,mbCanvas.height);
+  const type=document.getElementById('mb-type').value;
+  const str=+document.getElementById('mb-strength').value/100;
+  const dir=+document.getElementById('mb-dir').value;
+  const samples=+document.getElementById('mb-samples').value;
+  // Simulate motion blur via multiple draw passes with offset
+  mbCtx.globalAlpha=1/samples;
+  const rad=dir*(Math.PI/180);
+  for(let i=1;i<samples;i++){
+    const dx=Math.cos(rad)*str*i*3;
+    const dy=type==='radial'? Math.sin(rad)*str*i*3 : (dir>180?str*i*2:0);
+    if(type==='zoom'){const s=1+str*i*.02;mbCtx.save();mbCtx.translate(mbCanvas.width/2,mbCanvas.height/2);mbCtx.scale(s,s);mbCtx.translate(-mbCanvas.width/2,-mbCanvas.height/2);mbCtx.drawImage(mbVideo,0,0,mbCanvas.width,mbCanvas.height);mbCtx.restore();}
+    else {mbCtx.drawImage(mbVideo,dx,dy,mbCanvas.width,mbCanvas.height);}
+  }
+  mbCtx.globalAlpha=1;
+}
+
+// ══════════════════════════════════════════════════════════════
+// FEATURE 6 – STYLE ANALYSIS v2
+// ══════════════════════════════════════════════════════════════
+let saVideo, saAnalysisData = null;
+
+// SA upload zone removed (uses main video)
+
+async function saAnalyze() {
+  if (!currentVideo) {
+    alert('Please upload a video in the "Upload Video" section above first, then click Analyze.');
+    document.getElementById('uploadArea').scrollIntoView({ behavior: 'smooth' });
+    return;
+  }
+
+  if (!saVideo) saVideo = document.getElementById('sa-video');
+  if (saVideo) {
+    if (!saVideo.src) saVideo.src = URL.createObjectURL(currentVideo);
+    const container = document.getElementById('sa-video-container');
+    if (container) container.style.display = 'block';
+  }
+
+  const file = currentVideo;
+  const progressWrap  = document.getElementById('sa-progress-wrap');
+  const progressFill  = document.getElementById('sa-progress-fill');
+  const progressLabel = document.getElementById('sa-progress-label');
+  const analyzeBtn    = document.getElementById('sa-analyze-btn');
+
+  progressWrap.style.display = 'block';
+  progressFill.style.width   = '15%';
+  progressLabel.textContent  = 'Uploading video for analysis...';
+  document.getElementById('sa-results').style.display = 'none';
+  document.getElementById('sa-empty').style.display   = 'none';
+  analyzeBtn.disabled = true;
+
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('skill_level', document.getElementById('sa-skill-level')?.value || 'intermediate');
+
+  // Simulate multi-stage progress while waiting
+  const stages = [
+    [30, 'Detecting scene cuts...'],
+    [50, 'Extracting color palette...'],
+    [65, 'Measuring brightness & saturation...'],
+    [78, 'Analyzing audio loudness...'],
+    [88, 'Generating replication guide...'],
+    [95, 'Finalizing report...'],
+  ];
+  let stageIdx = 0;
+  const stageTimer = setInterval(() => {
+    if (stageIdx < stages.length) {
+      progressFill.style.width  = stages[stageIdx][0] + '%';
+      progressLabel.textContent = stages[stageIdx][1];
+      stageIdx++;
+    }
+  }, 1200);
+
+  try {
+    const res  = await fetch('/analyze-style', { method: 'POST', body: formData });
+    const data = await res.json();
+    clearInterval(stageTimer);
+    analyzeBtn.disabled = false;
+    progressWrap.style.display = 'none';
+
+    if (data.success) {
+      const duration   = data.duration || saVideo.duration || 60;
+      const totalCuts  = data.pacing.total_cuts || 0;
+      const avgClip    = totalCuts > 0 ? (duration / totalCuts).toFixed(1) : duration.toFixed(1);
+      saAnalysisData = {
+        videoMeta: {
+          duration,
+          resolution: data.resolution || 'Unknown',
+          frameRate:  data.fps || 30,
+        },
+        pacing: {
+          cutsPerMinute:    data.pacing.cuts_per_minute,
+          averageClipLength: parseFloat(data.pacing.avg_clip_length || avgClip),
+          rhythm:           data.pacing.label || 'moderate',
+          shotDurations:    data.pacing.shot_durations || [],
+          shotTimestamps:   data.pacing.shot_timestamps || [],
+        },
+        colorGrading: {
+          palette:     data.color ? data.color.palette : (data.palette || []),
+          temperature: (data.color ? data.color.temperature : data.color_temperature) || 'neutral',
+          saturation:  data.color ? data.color.saturation : 0.5,
+          satLevel:    data.color ? data.color.saturation_level : 'medium',
+        },
+        visual: data.visual || {},
+        audio:  data.audio  || {},
+        styleScore: {
+          overall: data.score,
+        },
+        recommendations:   data.recommendations || [],
+        replication_guide: data.replication_guide || {},
+      };
+      saRenderResults(saAnalysisData);
+    } else {
+      alert('Analysis error: ' + (data.error || 'Unknown error'));
+    }
+  } catch (e) {
+    clearInterval(stageTimer);
+    analyzeBtn.disabled = false;
+    progressWrap.style.display = 'none';
+    alert('Network error: ' + e.message);
+  }
+}
+
+function saRenderResults(d) {
+  document.getElementById('sa-results').style.display  = 'block';
+  document.getElementById('sa-export-btns').style.display = 'flex';
+
+  // Score gauge
+  saDrawScore(d.styleScore.overall);
+
+  // Color palette
+  const palEl = document.getElementById('sa-palette');
+  palEl.innerHTML = d.colorGrading.palette.map(c =>
+    `<div style="width:36px;height:36px;border-radius:8px;background:${c};box-shadow:0 2px 6px rgba(0,0,0,.4);cursor:pointer;position:relative" title="${c}" onclick="navigator.clipboard.writeText('${c}')"></div>`
+  ).join('');
+
+  // Pacing chart (real data)
+  saPacingChart(d.pacing);
+  document.getElementById('sa-pacing-info').innerHTML =
+    `<strong>Cuts/min:</strong> ${d.pacing.cutsPerMinute} &nbsp;
+     <strong>Avg clip:</strong> ${d.pacing.averageClipLength}s &nbsp;
+     <strong>Rhythm:</strong> <span class="badge badge-accent">${d.pacing.rhythm}</span>`;
+
+  // Visual metrics (real measured values)
+  const vis = d.visual || {};
+  const brightnessBar = vis.brightness !== undefined ? Math.round(vis.brightness * 100) : '--';
+  const contrastBar   = vis.contrast   !== undefined ? Math.round(vis.contrast   * 100) : '--';
+  const satVal        = d.colorGrading.saturation !== undefined ? Math.round(d.colorGrading.saturation * 100) : '--';
+  const satLabel      = d.colorGrading.satLevel || '--';
+  const colorTemp     = d.colorGrading.temperature || '--';
+  document.getElementById('sa-visual-metrics').innerHTML = [
+    `<div style="margin-bottom:.4rem"><span style="color:var(--muted)">Brightness:</span> <strong>${brightnessBar}%</strong> <span style="display:inline-block;width:80px;height:6px;background:var(--surface2);border-radius:3px;vertical-align:middle;margin-left:4px"><span style="display:block;height:100%;width:${typeof brightnessBar==='number'?brightnessBar:50}%;background:#f1c40f;border-radius:3px"></span></span></div>`,
+    `<div style="margin-bottom:.4rem"><span style="color:var(--muted)">Contrast:</span> <strong>${contrastBar}%</strong></div>`,
+    `<div style="margin-bottom:.4rem"><span style="color:var(--muted)">Saturation:</span> <strong>${satVal}%</strong> <em style="color:var(--muted);font-size:.78rem">(${satLabel})</em></div>`,
+    `<div><span style="color:var(--muted)">Color Temperature:</span> <strong>${colorTemp}</strong></div>`,
+  ].join('');
+
+  // Audio info
+  const aud = d.audio || {};
+  document.getElementById('sa-audio-info').innerHTML = aud.has_audio
+    ? `Audio detected &nbsp;·&nbsp; Loudness: <strong>${aud.integrated_loudness !== null && aud.integrated_loudness !== undefined ? aud.integrated_loudness.toFixed(1) + ' LUFS' : 'unmeasured'}</strong> &nbsp;·&nbsp; ${aud.loudness_label || ''}`
+    : 'No audio stream detected in this video.';
+
+  // Recommendations
+  document.getElementById('sa-recommendations').innerHTML =
+    d.recommendations.map(r => `<li style="margin-bottom:.4rem">${r}</li>`).join('');
+
+  // Replication guide
+  saRenderGuide(d.replication_guide);
+
+  // Full table
+  document.getElementById('sa-full-table').innerHTML = `<table>
+    <tr><th>Metric</th><th>Value</th></tr>
+    <tr><td>Duration</td><td>${d.videoMeta.duration.toFixed(1)}s</td></tr>
+    <tr><td>Resolution</td><td>${d.videoMeta.resolution}</td></tr>
+    <tr><td>Frame Rate</td><td>${d.videoMeta.frameRate} FPS</td></tr>
+    <tr><td>Color Temp</td><td>${d.colorGrading.temperature}</td></tr>
+    <tr><td>Saturation</td><td>${satLabel} (${satVal}%)</td></tr>
+    <tr><td>Brightness</td><td>${brightnessBar}%</td></tr>
+    <tr><td>Contrast</td><td>${contrastBar}%</td></tr>
+    <tr><td>Audio</td><td>${aud.has_audio ? (aud.integrated_loudness !== null ? aud.integrated_loudness.toFixed(1)+' LUFS' : 'present') : 'none'}</td></tr>
+    <tr><td>Overall Score</td><td>${d.styleScore.overall}/10</td></tr>
+  </table>`;
+}
+
+const GUIDE_SECTION_LABELS = {
+  project_setup:    { icon: '🎬', title: 'Project Setup' },
+  shot_recipe:      { icon: '🎥', title: 'Shot / Footage Recipe' },
+  edit_blueprint:   { icon: '✂️',  title: 'Edit Blueprint' },
+  color_recipe:     { icon: '🎨', title: 'Color Recipe' },
+  audio_recipe:     { icon: '🎵', title: 'Audio Recipe' },
+  export_settings:  { icon: '📤', title: 'Export Settings' },
+  editor_steps:     { icon: '💻', title: 'Generic / FFmpeg Steps' },
+};
+
+function saRenderGuide(guide) {
+  if (!guide || !Object.keys(guide).length) return;
+  const wrapEl = document.getElementById('sa-guide-wrap');
+  if (wrapEl) wrapEl.style.display = 'block';
+  Object.entries(GUIDE_SECTION_LABELS).forEach(([key, meta]) => {
+    const steps = guide[key];
+    const el    = document.getElementById('sa-guide-' + key.replace(/_/g,'-'));
+    if (!el || !steps || !steps.length) return;
+    el.innerHTML = saRenderGuideSection(key, meta, steps);
+  });
+}
+
+function saRenderGuideSection(key, meta, steps) {
+  const stepsHtml = steps.map((s, i) => {
+    const conf = s.confidence || 'medium';
+    const confColor = conf === 'high' ? '#27ae60' : conf === 'medium' ? '#f39c12' : '#95a5a6';
+    return `<li style="margin-bottom:.6rem;padding:.5rem .7rem;background:var(--surface2);border-radius:6px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem">
+        <span style="font-weight:500;font-size:.83rem">${s.step}</span>
+        <span style="font-size:.68rem;background:${confColor};color:#fff;border-radius:12px;padding:.1rem .45rem;white-space:nowrap;flex-shrink:0">${conf}</span>
+      </div>
+      ${s.why ? `<div style="font-size:.76rem;color:var(--muted);margin-top:.2rem">→ ${s.why}</div>` : ''}
+    </li>`;
+  }).join('');
+  return `<div style="background:var(--card-background);border-radius:10px;padding:1rem;margin-bottom:.75rem;border:1px solid var(--border)">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.6rem">
+      <strong style="font-size:.88rem">${meta.icon} ${meta.title}</strong>
+      <button onclick="saCopySectionSteps('${key}')" style="background:transparent;border:1px solid var(--border);border-radius:6px;padding:.15rem .5rem;font-size:.72rem;color:var(--muted);cursor:pointer">Copy</button>
+    </div>
+    <ol style="margin:0;padding-left:1.1rem;font-size:.82rem">${stepsHtml}</ol>
+  </div>`;
+}
+
+function saCopySectionSteps(key) {
+  if (!saAnalysisData || !saAnalysisData.replication_guide) return;
+  const steps = saAnalysisData.replication_guide[key];
+  if (!steps) return;
+  const text = steps.map((s, i) => `${i+1}. ${s.step}\n   Why: ${s.why || ''}\n   Confidence: ${s.confidence || 'medium'}`).join('\n\n');
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target;
+    const orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = orig, 1500);
+  });
+}
+
+function saDrawScore(score) {
+  const c = document.getElementById('sa-score-canvas');
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0, 0, 140, 140);
+  ctx.beginPath(); ctx.arc(70, 70, 55, Math.PI * 1.3 - 0.01, Math.PI * 1.7 + 0.01);
+  ctx.strokeStyle = '#2d3255'; ctx.lineWidth = 10; ctx.lineCap = 'round'; ctx.stroke();
+  const pct = score / 10;
+  const end = Math.PI * 1.3 + pct * (2 * Math.PI * 0.7);
+  const grad = ctx.createLinearGradient(20, 70, 120, 70);
+  grad.addColorStop(0, '#6c63ff'); grad.addColorStop(1, '#00d2ff');
+  ctx.beginPath(); ctx.arc(70, 70, 55, Math.PI * 1.3, end);
+  ctx.strokeStyle = grad; ctx.lineWidth = 10; ctx.lineCap = 'round'; ctx.stroke();
+  document.getElementById('sa-score-label').textContent = score + '/10';
+}
+
+function saPacingChart(p) {
+  const c   = document.getElementById('sa-pacing-canvas');
+  const ctx = c.getContext('2d');
+  c.width   = c.offsetWidth || 400;
+  const W = c.width, H = 90;
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#0a0c13'; ctx.fillRect(0, 0, W, H);
+
+  const durations = p.shotDurations || p.shot_durations || [];
+  if (!durations.length) {
+    // No real data available yet
+    ctx.fillStyle = 'rgba(255,255,255,.25)';
+    ctx.font = '11px Inter, sans-serif';
+    ctx.fillText('No cuts detected', 10, H / 2 + 4);
+    const noteEl = document.getElementById('sa-pacing-note');
+    if (noteEl) noteEl.textContent = '(single continuous take)';
+    return;
+  }
+
+  const noteEl = document.getElementById('sa-pacing-note');
+  if (noteEl) noteEl.textContent = `(${durations.length} shot${durations.length !== 1 ? 's' : ''} measured)`;
+
+  const maxDur = Math.max(...durations, 0.01);
+  const gap    = 2;
+  const barW   = Math.max(2, Math.floor((W - gap * durations.length) / durations.length));
+  durations.forEach((dur, i) => {
+    const h    = Math.max(4, (dur / maxDur) * (H - 10));
+    const grad = ctx.createLinearGradient(0, H - h, 0, H);
+    grad.addColorStop(0, '#6c63ff');
+    grad.addColorStop(1, 'rgba(108,99,255,.15)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(i * (barW + gap), H - h, barW, h);
+  });
+}
+
+function saExportJSON() {
+  if (!saAnalysisData) return;
+  const a = document.createElement('a');
+  a.download = 'style_analysis.json';
+  a.href = 'data:application/json,' + encodeURIComponent(JSON.stringify(saAnalysisData, null, 2));
+  a.click();
+}
+
+function saExportMarkdown() {
+  if (!saAnalysisData) return;
+  const d     = saAnalysisData;
+  const guide = d.replication_guide || {};
+  let md = `# Video Style Analysis Report\n\n`;
+  md += `**Score:** ${d.styleScore.overall}/10  \n`;
+  md += `**Resolution:** ${d.videoMeta.resolution}  \n`;
+  md += `**Frame Rate:** ${d.videoMeta.frameRate} FPS  \n`;
+  md += `**Duration:** ${d.videoMeta.duration.toFixed(1)}s  \n`;
+  md += `**Pacing:** ${d.pacing.rhythm} (${d.pacing.cutsPerMinute} cuts/min, avg ${d.pacing.averageClipLength}s/clip)  \n`;
+  md += `**Color Temperature:** ${d.colorGrading.temperature}  \n`;
+  md += `**Saturation:** ${d.colorGrading.satLevel}  \n`;
+  const aud = d.audio || {};
+  if (aud.has_audio) {
+    md += `**Audio Loudness:** ${aud.integrated_loudness !== null ? aud.integrated_loudness.toFixed(1) + ' LUFS' : 'detected (unmeasured)'}  \n`;
+  }
+  md += `\n---\n\n`;
+  md += `## Replication Guide\n\n`;
+  Object.entries(GUIDE_SECTION_LABELS).forEach(([key, meta]) => {
+    const steps = guide[key];
+    if (!steps || !steps.length) return;
+    md += `### ${meta.icon} ${meta.title}\n\n`;
+    steps.forEach((s, i) => {
+      md += `${i+1}. **${s.step}**  \n`;
+      if (s.why) md += `   *Why: ${s.why}*  \n`;
+      md += `   Confidence: \`${s.confidence || 'medium'}\`  \n\n`;
+    });
+  });
+  md += `\n---\n\n## Recommendations\n\n`;
+  (d.recommendations || []).forEach(r => { md += `- ${r}\n`; });
+  md += `\n---\n*Generated by Video Editor Pro Style Analyzer*\n`;
+
+  const a = document.createElement('a');
+  a.download = 'style_analysis.md';
+  a.href = 'data:text/markdown;charset=utf-8,' + encodeURIComponent(md);
+  a.click();
+}
+
+function saCopyGuide() {
+  if (!saAnalysisData) return;
+  const guide = saAnalysisData.replication_guide || {};
+  let text = 'VIDEO STYLE REPLICATION GUIDE\n' + '='.repeat(40) + '\n\n';
+  Object.entries(GUIDE_SECTION_LABELS).forEach(([key, meta]) => {
+    const steps = guide[key];
+    if (!steps || !steps.length) return;
+    text += `${meta.icon} ${meta.title.toUpperCase()}\n`;
+    steps.forEach((s, i) => {
+      text += `${i+1}. ${s.step}\n`;
+      if (s.why) text += `   Why: ${s.why}\n`;
+    });
+    text += '\n';
+  });
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('[onclick="saCopyGuide()"]');
+    if (btn) { const orig = btn.textContent; btn.textContent = '✓ Copied!'; setTimeout(() => btn.textContent = orig, 2000); }
+  });
+}
+
+    </script>
+</body>
+</html> 

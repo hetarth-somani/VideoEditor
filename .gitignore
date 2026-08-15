@@ -1,0 +1,61 @@
+# Environment
+env
+.env
+.env.example
+.env.local
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+
+# Upload/output folders (video files)
+uploads/
+output/
+outputs/
+recordings/
+
+# Large test files
+*.mp4
+*.avi
+*.mov
+*.mkv
+
+# Security - NEVER commit private keys
+*.pem
+*.key
+*.p12
+*.pfx
+
+# IDE/OS
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Vercel
+.vercel
+
+# Node
+node_modules/
+
+# Logs and temp files
+error.txt
+error_utf8.txt
+search_results.txt
+kf_search_results.txt
+routes_list.txt
+
+# Instance folder (SQLite database)
+instance/
+*.db
+*.sqlite
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
