@@ -123,3 +123,4 @@ The application uses Flask's development server by default. For production deplo
 ## Contributing
 
 [Add contribution guidelines here] # VideoEditor
+# VideoEditor
