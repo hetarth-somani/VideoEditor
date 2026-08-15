@@ -2,10 +2,11 @@ services:
   - type: web
     name: video-processor-app
     env: python
-    buildCommand: apt-get update && apt-get install -y ffmpeg && pip install -r requirements.txt
-    startCommand: sh -c "celery -A celery_worker worker --loglevel=info --concurrency=1 & gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --timeout 300"
+    plan: free
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --timeout 300
     envVars:
       - key: PYTHON_VERSION
-        value: 3.9.18
+        value: 3.11.9
       - key: FLASK_ENV
         value: production
