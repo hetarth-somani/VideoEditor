@@ -8,83 +8,154 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --primary-color: #3498db;
-            --secondary-color: #2c3e50;
-            --accent-color: #e74c3c;
+            --primary-color: #2563eb;
+            --primary-hover: #1d4ed8;
+            --secondary-color: #0f172a;
+            --accent-color: #3b82f6;
             --background-color: #f8fafc;
             --card-background: #ffffff;
-            --text-color: #34495e;
-            --border-radius: 12px;
+            --text-color: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --border-radius: 8px;
+            --surface: #ffffff;
+            --surface2: #f1f5f9;
+            --border: #e2e8f0;
+            --text: #1e293b;
+            --muted: #64748b;
+            --accent: #2563eb;
+            --accent2: #0284c7;
+            --success: #16a34a;
+            --danger: #dc2626;
         }
 
         body {
             background-color: var(--background-color);
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             color: var(--text-color);
+            line-height: 1.5;
         }
 
         .navbar {
             background-color: var(--secondary-color);
-            padding: 1rem 0;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
         }
 
         .navbar-brand {
-            color: white !important;
+            color: #ffffff !important;
             font-weight: 600;
-            font-size: 1.5rem;
+            font-size: 1.25rem;
+            letter-spacing: -0.02em;
         }
 
         .nav-link {
-            color: rgba(255,255,255,0.8) !important;
-        }
-
-        .nav-link:hover {
-            color: white !important;
-        }
-
-        .container {
-            max-width: 1200px;
-            padding: 2rem 1rem;
-        }
-
-        .feature-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .feature-btn {
-            background: var(--card-background);
-            border: none;
-            padding: 1rem 2rem;
-            border-radius: var(--border-radius);
-            color: var(--text-color);
+            color: #94a3b8 !important;
+            font-size: 0.9rem;
             font-weight: 500;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            transition: all 0.2s ease;
+            transition: color 0.15s ease;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: #ffffff !important;
+        }
+
+        .editor-container {
+            max-width: 1400px;
+            padding: 1.5rem 1rem;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: var(--card-background);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+
+        .card-header-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-color);
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
 
+        .video-container {
+            width: 100%;
+            height: 380px;
+            background: #0f172a;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .video-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: var(--border-radius);
+            background: #0f172a;
+        }
+
+        .upload-area {
+            border: 2px dashed #cbd5e1;
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: #f8fafc;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary-color);
+            background: #f1f5f9;
+        }
+
+        .upload-area i {
+            color: #64748b;
+        }
+
+        .feature-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .feature-btn {
+            background: #f8fafc;
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 0.9rem;
+            border-radius: 6px;
+            color: var(--text-color);
+            font-weight: 500;
+            font-size: 0.85rem;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
         .feature-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            background: #e2e8f0;
+            color: #0f172a;
         }
 
         .feature-btn.active {
-            background-color: var(--primary-color);
-            color: white;
+            background-color: var(--primary-color) !important;
+            color: #ffffff !important;
+            border-color: var(--primary-color) !important;
         }
 
         .feature-content {
             background: var(--card-background);
             border-radius: var(--border-radius);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 1.25rem;
             display: none;
         }
 
@@ -92,223 +163,135 @@
             display: block;
         }
 
-        .video-preview {
-            width: 100%;
-            border-radius: var(--border-radius);
-            margin: 1rem 0;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            display: none;
-        }
-
-        .video-preview.active {
-            display: block;
-        }
-
-        .upload-placeholder {
-            background: #f8fafc;
-            border: 2px dashed #cbd5e1;
-            border-radius: var(--border-radius);
-            padding: 2rem;
-            text-align: center;
-            margin: 1rem 0;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .upload-placeholder:hover {
-            border-color: var(--primary-color);
-            background: #f1f5f9;
-        }
-
-        .upload-placeholder i {
-            font-size: 3rem;
-            color: #94a3b8;
-            margin-bottom: 1rem;
-        }
-
-        .upload-placeholder p {
-            color: #64748b;
-            margin: 0;
-        }
-
         .btn-primary {
             background-color: var(--primary-color);
-            border: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
+            border-color: var(--primary-color);
+            color: #ffffff;
             font-weight: 500;
-            transition: all 0.2s ease;
+            font-size: 0.9rem;
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
         }
 
         .btn-primary:hover {
-            background-color: #2980b9;
-            transform: translateY(-1px);
+            background-color: var(--primary-hover);
+            border-color: var(--primary-hover);
         }
 
-        .output-section {
-            background: var(--card-background);
-            padding: 1.5rem;
-            border-radius: var(--border-radius);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        .btn-outline-secondary {
+            border-color: #cbd5e1;
+            color: #475569;
+            font-weight: 500;
+            font-size: 0.85rem;
+            border-radius: 6px;
         }
 
-        .progress-container {
-            margin-top: 1rem;
-            display: none;
+        .btn-outline-secondary:hover {
+            background-color: #f1f5f9;
+            color: #0f172a;
+            border-color: #94a3b8;
         }
 
-        .progress {
-            height: 8px;
-            border-radius: 4px;
-            background-color: #e2e8f0;
-        }
-
-        .progress-bar {
-            background-color: var(--primary-color);
-        }
-
-        .status-message {
-            margin-top: 0.5rem;
-            font-size: 0.9rem;
-            color: var(--text-color);
-            text-align: center;
-        }
-
-        .upload-area {
-            border: 2px dashed #ccc;
-            border-radius: 8px;
-            padding: 40px;
-            text-align: center;
-            cursor: pointer;
-            margin-bottom: 20px;
-        }
-        .feature-card {
-            padding: 15px;
-            margin: 10px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: transform 0.2s;
-        }
-        .feature-card:hover {
-            transform: translateY(-5px);
-        }
-        .preview-area {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            min-height: 300px;
-        }
-        .advanced-features {
-            background: #f1f5f9;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 20px;
-        }
-        .advanced-feature-card {
-            background: white;
-            padding: 15px;
-            margin: 10px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-        }
-        .advanced-feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
         .prompt-section {
-            margin: 20px 0;
-            padding: 15px;
-            background: #f8f9fa;
-            border-radius: 5px;
+            background: #f8fafc;
+            border-radius: var(--border-radius);
+            padding: 1.25rem;
         }
 
         .prompt-input {
             display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
+            gap: 0.5rem;
         }
 
-        .prompt-input input {
-            flex: 1;
+        .form-control, .form-select {
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            color: #1e293b;
         }
 
-        .prompt-help {
-            font-size: 0.9em;
-            color: #666;
+        .form-control:focus, .form-select:focus {
+            border-color: #93c5fd;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
         }
 
-        .prompt-help ul {
-            list-style-type: none;
-            padding-left: 0;
+        .form-label {
+            font-size: 0.825rem;
+            font-weight: 500;
+            color: #475569;
+            margin-bottom: 0.35rem;
         }
 
-        .prompt-help li {
-            margin: 5px 0;
+        .slider-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
         }
-    
 
+        .slider-row span {
+            width: 3rem;
+            text-align: right;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
 
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
 
+        @media (max-width: 991px) {
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+        }
 
-.nav-links a{color:var(--muted);text-decoration:none;margin-left:1.5rem;font-size:.9rem;transition:.2s;}
-.nav-links a:hover,.nav-links a.active{color:var(--text);}
+        .sa-guide-section {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+        }
 
+        .tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            padding: 0.2rem 0.5rem;
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            cursor: pointer;
+        }
 
+        .tag:hover, .tag.active {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
 
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
 
-.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.25rem;}
-.card-title{font-size:1.1rem;font-weight:600;margin-bottom:1rem;display:flex;align-items:center;gap:.5rem;}
-.card-title i{color:var(--accent);}
-label{font-size:.82rem;color:var(--muted);margin-bottom:.3rem;display:block;}
-input[type=range]{width:100%;accent-color:var(--accent);background:transparent;}
-input[type=number],input[type=text],select,textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);padding:.45rem .7rem;font-size:.85rem;font-family:inherit;}
-input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);}
+        th {
+            color: var(--text-muted);
+            font-weight: 600;
+            padding: 0.5rem 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+            text-align: left;
+        }
 
-
-
-.btn-outline{background:transparent;border:1px solid var(--border);color:var(--muted);}
-.btn-outline:hover{border-color:var(--accent);color:var(--text);}
-.slider-row{display:flex;align-items:center;gap:.7rem;margin-bottom:.75rem;}
-.slider-row span{width:2.5rem;text-align:right;font-size:.8rem;color:var(--accent);}
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
-.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.75rem;}
-.mb-1{margin-bottom:.5rem;}
-.mb-2{margin-bottom:.75rem;}
-.mb-3{margin-bottom:1rem;}
-.mb-4{margin-bottom:1.5rem;}
-.mt-2{margin-top:.75rem;}
-.mt-3{margin-top:1rem;}
-.gap-2{gap:.5rem;}
-.flex{display:flex;}
-.flex-wrap{flex-wrap:wrap;}
-.items-center{align-items:center;}
-.badge{padding:.2rem .55rem;border-radius:20px;font-size:.72rem;font-weight:600;}
-.badge-accent{background:rgba(108,99,255,.2);color:var(--accent);}
-.badge-success{background:rgba(34,197,94,.2);color:var(--success);}
-.section-title{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:.6rem;font-weight:600;}
-canvas{border-radius:10px;display:block;}
-.upload-zone{border:2px dashed var(--border);border-radius:12px;padding:2rem;text-align:center;cursor:pointer;transition:.2s;}
-.upload-zone:hover{border-color:var(--accent);background:rgba(108,99,255,.05);}
-.upload-zone i{font-size:2rem;color:var(--muted);margin-bottom:.5rem;}
-.upload-zone p{color:var(--muted);font-size:.85rem;}
-.progress-bar-wrap{background:var(--surface2);border-radius:20px;height:6px;overflow:hidden;margin:.4rem 0;}
-.progress-fill{height:100%;border-radius:20px;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s;}
-video{border-radius:10px;width:100%;}
-.tag{display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .6rem;background:var(--surface2);border:1px solid var(--border);border-radius:6px;font-size:.78rem;cursor:pointer;transition:.2s;}
-.tag:hover,.tag.active{border-color:var(--accent);color:var(--accent);}
-.alert{padding:.7rem 1rem;border-radius:8px;font-size:.85rem;margin:.5rem 0;}
-.alert-info{background:rgba(0,210,255,.1);border:1px solid rgba(0,210,255,.3);color:var(--accent2);}
-.alert-success{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:var(--success);}
-.alert-danger{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:var(--danger);}
-table{width:100%;border-collapse:collapse;font-size:.83rem;}
-th{color:var(--muted);font-weight:500;padding:.4rem .6rem;border-bottom:1px solid var(--border);text-align:left;}
-td{padding:.4rem .6rem;border-bottom:1px solid var(--border);}
-.chip{padding:.15rem .5rem;border-radius:4px;font-size:.75rem;background:var(--surface2);color:var(--muted);}
-::-webkit-scrollbar{width:5px;height:5px;}
-::-webkit-scrollbar-track{background:var(--bg);}
-::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px;}
-
+        td {
+            padding: 0.5rem 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
     </style>
 </head>
 <body>
@@ -339,22 +322,72 @@ td{padding:.4rem .6rem;border-bottom:1px solid var(--border);}
         </div>
     </nav>
 
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-8">
-                <!-- Upload Section -->
-                <div class="upload-section-main mb-4" id="uploadContent" style="background: var(--card-background); border-radius: var(--border-radius); padding: 1.5rem; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                    <h3><i class="fas fa-upload me-2"></i>Upload Video</h3>
-                    <div class="upload-area" id="uploadArea">
-                        <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTMyIDJDMTUuNDMxIDIgMiAxNS40MzEgMiAzMmMwIDE2LjU2OSAxMy40MzEgMzAgMzAgMzBzMzAtMTMuNDMxIDMwLTMwQzYyIDE1LjQzMSA0OC41NjkgMiAzMiAyem0wIDRjMTQuMzU5IDAgMjYgMTEuNjQxIDI2IDI2UzQ2LjM1OSA1OCAzMiA1OCA2IDQ2LjM1OSA2IDMyIDIxLjY0MSA2IDMyIDZ6bTAgOGMtMS4xMDQgMC0yIC44OTYtMiAydjE2aC0xNmMtMS4xMDQgMC0yIC44OTYtMiAyczAuODk2IDIgMiAyaDE2djE2YzAgMS4xMDQgMC44OTYgMiAyIDJzMi0wLjg5NiAyLTJWMzZoMTZjMS4xMDQgMCAyLTAuODk2IDItMnMtMC44OTYtMi0yLTJIMzRWMTZjMC0xLjEwNC0wLjg5Ni0yLTItMnoiIGZpbGw9IiM2NjY2NjYiLz48L3N2Zz4=" alt="Upload" style="width: 64px; height: 64px;">
-                        <p class="mt-3">Click to upload a video or drag and drop</p>
+        <div class="editor-container">
+        <!-- Top Row: Balanced Equal-Sized Video Previews (50% / 50%) -->
+        <div class="row g-4 mb-4">
+            <!-- Left Column: Input Video (50%) -->
+            <div class="col-lg-6">
+                <div class="card h-100 p-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="card-header-title">
+                            <i class="fas fa-file-video text-primary"></i> Original Video
+                        </div>
+                        <span id="inputVideoBadge" class="badge bg-light text-muted border" style="font-size:0.75rem;">No video uploaded</span>
                     </div>
-                    <video id="videoPreview" class="video-preview" controls></video>
+                    <div class="upload-area" id="uploadArea">
+                        <i class="fas fa-cloud-upload-alt fa-3x mb-2 text-muted"></i>
+                        <p class="mb-1 fw-semibold text-dark">Click to upload video or drag & drop</p>
+                        <p class="small text-muted mb-0">Supports MP4, MOV, AVI, WebM</p>
+                    </div>
+                    <div class="video-container mt-2" id="inputVideoContainer" style="display: none;">
+                        <video id="videoPreview" class="video-preview" controls></video>
+                    </div>
                 </div>
+            </div>
 
-                <!-- Feature Buttons -->
-                <div class="feature-buttons">
-                    <button class="feature-btn" onclick="showFeature('trim', this)">
+            <!-- Right Column: Processed Output Preview (50%) -->
+            <div class="col-lg-6">
+                <div class="card h-100 p-3 output-section">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="card-header-title">
+                            <i class="fas fa-play-circle text-primary"></i> Output Preview
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button id="undoBtn" class="btn btn-outline-secondary btn-sm" onclick="undoLastEffect()" disabled>
+                                <i class="fas fa-undo me-1"></i> Undo
+                            </button>
+                        </div>
+                    </div>
+                    <div class="video-container" id="outputVideoContainer">
+                        <video id="outputPreview" class="video-preview" controls style="display: none;">
+                            Your browser does not support the video tag.
+                        </video>
+                        <div id="outputPlaceholder" class="text-center text-muted p-4">
+                            <i class="fas fa-film fa-3x mb-2 opacity-50 text-muted"></i>
+                            <p class="mb-1 fw-medium text-dark">Processed video preview will appear here</p>
+                            <p class="small text-muted mb-0">Select an edit or effect from the tools below</p>
+                        </div>
+                    </div>
+                    <div class="progress-container mt-3" style="display: none;">
+                        <div class="progress" style="height: 6px;">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                        </div>
+                        <div class="status-message text-center mt-2 small text-muted"></div>
+                    </div>
+                    <a id="downloadBtn" class="btn btn-primary w-100 mt-3" style="display: none;">
+                        <i class="fas fa-download me-2"></i>Download Processed Video
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Tools & Features Container (Full Width) -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card p-3 mb-4">
+                    <!-- Feature Buttons Toolbar -->
+                    <div class="feature-buttons mb-3 pb-3 border-bottom">
+                        <button class="feature-btn" onclick="showFeature('trim', this)">
                         <i class="fas fa-cut"></i> Trim Video
                     </button>
                     <button class="feature-btn" onclick="showFeature('resize', this)">
@@ -409,9 +442,11 @@ td{padding:.4rem .6rem;border-bottom:1px solid var(--border);}
                     <button class="feature-btn" onclick="showFeature('dailymotion-clips', this)">
                         <i class="fas fa-play-circle"></i> Dailymotion Clips
                     </button>
-                </div>
+                    </div>
 
-                <!-- Feature Contents -->
+                    <!-- Active Feature Contents (Placed at the TOP of the tools card!) -->
+                    <div class="feature-contents-wrapper">
+                        <!-- Feature Contents -->
                 <div class="feature-content" id="trimContent">
                     <h3><i class="fas fa-cut me-2"></i>Trim Video</h3>
                     <div class="row">
@@ -566,74 +601,6 @@ td{padding:.4rem .6rem;border-bottom:1px solid var(--border);}
                     </button>
                 </div>
 
-                <div class="prompt-section">
-                    <h3>Text Commands</h3>
-                    <div class="prompt-input">
-                        <input type="text" id="promptInput" placeholder="Enter your command (e.g., 'trim start=10 end=30', 'speed factor=1.5', 'color_grade preset=cinematic')" class="form-control">
-                        <button onclick="processPrompt()" class="btn btn-primary">Process</button>
-                    </div>
-                    <div class="prompt-help">
-                        <h4>Available Commands: <button class="btn btn-sm btn-info" onclick="showPromptHelp()">Show All Commands</button></h4>
-                        <div id="basicCommands">
-                            <strong>Basic Operations:</strong>
-                            <ul>
-                                <li><code>trim start=10 end=30</code> - Trim video from 10s to 30s</li>
-                                <li><code>resize width=1920 height=1080</code> - Resize to 1920x1080</li>
-                                <li><code>speed factor=2.0</code> - Change speed (2x faster)</li>
-                                <li><code>extract_audio format=mp3</code> - Extract audio as MP3</li>
-                            </ul>
-                            <strong>Effects & Color:</strong>
-                            <ul>
-                                <li><code>color_grade preset=cinematic</code> - Apply color preset</li>
-                                <li><code>effect type=blur strength=2</code> - Apply blur effect</li>
-                                <li><code>overlay type=text content="Hello" position=center</code> - Add text</li>
-                            </ul>
-                        </div>
-                        <div id="allCommands" style="display: none;">
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <strong>Basic Operations:</strong>
-                                    <ul style="font-size: 0.85em;">
-                                        <li><code>trim start=X end=Y</code></li>
-                                        <li><code>resize width=X height=Y</code></li>
-                                        <li><code>speed factor=X</code></li>
-                                        <li><code>extract_audio format=mp3|wav</code></li>
-                                    </ul>
-                                    <strong>Color & Effects:</strong>
-                                    <ul style="font-size: 0.85em;">
-                                        <li><code>color_grade preset=cinematic|vintage|warm|cool|noir|vibrant</code></li>
-                                        <li><code>color_grade brightness=X contrast=Y saturation=Z</code></li>
-                                        <li><code>effect type=blur|sepia|negative|mirror|pixelate|edge_detection strength=X</code></li>
-                                        <li><code>speed_ramp start=X end=Y factor=Z</code></li>
-                                    </ul>
-                                </div>
-                                <div class="col-md-6">
-                                    <strong>Animation & Text:</strong>
-                                    <ul style="font-size: 0.85em;">
-                                        <li><code>animation type=zoom|pan|fade|rotate start=X end=Y scale=Z</code></li>
-                                        <li><code>animation type=pan direction=left|right|up|down</code></li>
-                                        <li><code>overlay type=text content="Text" position=center|top|bottom</code></li>
-                                        <li><code>overlay type=text content="Text" x=X y=Y duration=W</code></li>
-                                    </ul>
-                                    <strong>Multi-Video Commands:</strong>
-                                    <ul style="font-size: 0.85em;">
-                                        <li><code>merge_videos transition=fade duration=2</code> (requires multiple files)</li>
-                                        <li><code>transition type=dissolve duration=1.5</code> (requires multiple files)</li>
-                                        <li><em>Use Multi Video Editor for multi-file operations</em></li>
-                                    </ul>
-                                    <strong>Examples:</strong>
-                                    <ul style="font-size: 0.85em;">
-                                        <li><code>trim start=5 end=15</code></li>
-                                        <li><code>speed factor=1.5</code></li>
-                                        <li><code>color_grade preset=cinematic</code></li>
-                                        <li><code>effect type=blur strength=3</code></li>
-                                        <li><code>overlay type=text content="My Video" position=bottom</code></li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- Add Pexels Stock Clips Search Content -->
                 <div class="feature-content" id="pexels-clipsContent">
@@ -1036,98 +1003,140 @@ td{padding:.4rem .6rem;border-bottom:1px solid var(--border);}
 
                 <!-- STYLEANALYSIS Content -->
                 <div class="feature-content" id="styleanalysisContent">
-                    <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+                    <div class="d-flex align-items-center justify-content-between mb-4 pb-2 border-bottom flex-wrap gap-2">
                         <div>
-                            <h3 class="mb-0"><i class="fas fa-chart-line me-2" style="color: #6c63ff;"></i>Style Analyzer</h3>
-                            <p class="text-muted mb-0" style="font-size:0.85rem;">Analyze video pacing, color palette, brightness, audio loudness, and generate a step-by-step replication guide.</p>
+                            <h4 class="mb-1 fw-bold text-dark"><i class="fas fa-chart-line me-2 text-primary"></i>Style Analyzer & Replication Guide</h4>
+                            <p class="text-muted mb-0 small">Automated analysis of video pacing, color palette, brightness, audio loudness, and step-by-step editing blueprint.</p>
                         </div>
-                        <span class="badge" style="background:#6c63ff; color:white; padding:0.4rem 0.8rem; font-size:0.8rem;"><i class="fas fa-check-circle me-1"></i>Deterministic Engine v2</span>
+                        <span class="badge bg-primary text-white px-3 py-2" style="font-size:0.75rem;"><i class="fas fa-check-circle me-1"></i>Deterministic Engine v2</span>
                     </div>
-  <div class="two-col" style="align-items:start">
-    <div>
-      <div class="card mb-3" style="display:none;" id="sa-video-container">
-        <video id="sa-video" controls style="width:100%; border-radius:8px;"></video>
-      </div>
-      <div class="card">
-        <div class="card-title"><i class="fas fa-chart-line"></i> Analysis Controls</div>
-        <div class="mb-3">
-          <label style="font-size:.82rem;color:var(--muted);margin-bottom:.3rem;display:block">Skill Level</label>
-          <select id="sa-skill-level" style="width:100%;border-radius:8px;padding:.4rem .7rem;background:var(--surface2);border:1px solid var(--border);color:var(--text)">
-            <option value="beginner">Beginner</option>
-            <option value="intermediate" selected>Intermediate</option>
-            <option value="advanced">Advanced</option>
-          </select>
-        </div>
-        <button class="btn btn-primary" id="sa-analyze-btn" onclick="saAnalyze()" style="width:100%;justify-content:center;padding:.75rem"><i class="fas fa-wand-magic-sparkles"></i> Analyze Video Style</button>
-        <div id="sa-progress-wrap" style="display:none;margin-top:.75rem">
-          <div style="font-size:.8rem;color:var(--muted);margin-bottom:.3rem" id="sa-progress-label">Analyzing...</div>
-          <div class="progress-bar-wrap"><div class="progress-fill" id="sa-progress-fill" style="width:0%"></div></div>
-        </div>
-        <div class="flex gap-2 mt-3" id="sa-export-btns" style="display:none!important">
-          <button class="btn btn-success" onclick="saExportJSON()"><i class="fas fa-download"></i> Export JSON</button>
-          <button class="btn btn-outline" onclick="saExportMarkdown()"><i class="fas fa-file-alt"></i> Export .md</button>
-          <button class="btn btn-outline" onclick="saCopyGuide()"><i class="fas fa-copy"></i> Copy Guide</button>
-        </div>
-      </div>
-    </div>
-    <div>
-      <div id="sa-results" style="display:none">
-        <div class="card mb-3">
-          <div class="card-title"><i class="fas fa-tachometer-alt"></i> Style Score</div>
-          <div style="text-align:center;padding:1rem 0">
-            <canvas id="sa-score-canvas" width="140" height="140" style="display:inline-block;background:transparent;border-radius:50%;"></canvas>
-            <div id="sa-score-label" style="font-size:2rem;font-weight:700;color:var(--accent);margin-top:.5rem">—</div>
-            <div style="font-size:.8rem;color:var(--muted)">Overall Style Score</div>
-          </div>
-        </div>
-        <div class="card mb-3">
-          <div class="card-title"><i class="fas fa-palette"></i> Color Palette</div>
-          <div id="sa-palette" class="flex gap-2 flex-wrap"></div>
-        </div>
-        <div class="card mb-3">
-          <div class="card-title"><i class="fas fa-chart-bar"></i> Pacing &amp; Cuts
-            <span id="sa-pacing-note" style="font-size:.72rem;color:var(--muted);font-weight:400;margin-left:.5rem"></span>
-          </div>
-          <canvas id="sa-pacing-canvas" height="90" style="width:100%;background:#0a0c13;border-radius:8px;"></canvas>
-          <div id="sa-pacing-info" class="mt-2" style="font-size:.82rem;color:var(--muted)"></div>
-        </div>
-        <div class="card mb-3">
-          <div class="card-title"><i class="fas fa-eye"></i> Visual Metrics</div>
-          <div id="sa-visual-metrics" style="font-size:.82rem"></div>
-        </div>
-        <div class="card mb-3">
-          <div class="card-title"><i class="fas fa-volume-up"></i> Audio</div>
-          <div id="sa-audio-info" style="font-size:.82rem;color:var(--muted)"></div>
-        </div>
-        <div class="card mb-3">
-          <div class="card-title"><i class="fas fa-lightbulb"></i> Recommendations</div>
-          <ul id="sa-recommendations" style="font-size:.83rem;padding-left:1.2rem"></ul>
-        </div>
-        <!-- Replication Guide Sections -->
-        <div id="sa-guide-wrap" style="display:none">
-          <div style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem">
-            <h5 style="margin:0;color:var(--text)"><i class="fas fa-book me-2"></i>Replication Guide</h5>
-            <span style="font-size:.72rem;background:var(--surface2);border-radius:20px;padding:.2rem .6rem;color:var(--muted)">evidence-based · no AI guesses</span>
-          </div>
-          <div id="sa-guide-project-setup" class="sa-guide-section"></div>
-          <div id="sa-guide-shot-recipe" class="sa-guide-section"></div>
-          <div id="sa-guide-edit-blueprint" class="sa-guide-section"></div>
-          <div id="sa-guide-color-recipe" class="sa-guide-section"></div>
-          <div id="sa-guide-audio-recipe" class="sa-guide-section"></div>
-          <div id="sa-guide-export-settings" class="sa-guide-section"></div>
-          <div id="sa-guide-editor-steps" class="sa-guide-section"></div>
-        </div>
-        <div class="card">
-          <div class="card-title"><i class="fas fa-table"></i> Full Analysis</div>
-          <div id="sa-full-table" style="font-size:.8rem"></div>
-        </div>
-      </div>
-      <div id="sa-empty" style="color:var(--muted);font-size:.85rem;text-align:center;padding:3rem 1rem">
-        <i class="fas fa-chart-line" style="font-size:2rem;margin-bottom:.5rem;display:block"></i>Upload a video and click Analyze to see the style report.
-      </div>
-    </div>
-  </div>
-</div>
+
+                    <div class="row g-4">
+                        <!-- Sidebar: Controls -->
+                        <div class="col-lg-3 col-md-4">
+                            <div class="card p-3 mb-3" style="display:none;" id="sa-video-container">
+                                <label class="form-label mb-1">Analyzing Clip:</label>
+                                <video id="sa-video" controls style="width:100%; border-radius:6px; background:#0f172a; max-height:180px;"></video>
+                            </div>
+                            <div class="card p-3">
+                                <h6 class="fw-semibold text-secondary mb-3"><i class="fas fa-sliders-h me-1 text-primary"></i> Analysis Controls</h6>
+                                <div class="mb-3">
+                                    <label class="form-label">Editor Skill Level</label>
+                                    <select id="sa-skill-level" class="form-select form-select-sm">
+                                        <option value="beginner">Beginner</option>
+                                        <option value="intermediate" selected>Intermediate</option>
+                                        <option value="advanced">Advanced</option>
+                                    </select>
+                                </div>
+                                <button class="btn btn-primary w-100" id="sa-analyze-btn" onclick="saAnalyze()">
+                                    <i class="fas fa-wand-magic-sparkles me-1"></i> Analyze Video Style
+                                </button>
+                                <div id="sa-progress-wrap" style="display:none; margin-top:0.75rem;">
+                                    <div class="small text-muted mb-1" id="sa-progress-label">Analyzing...</div>
+                                    <div class="progress" style="height:6px;">
+                                        <div class="progress-bar progress-bar-striped progress-bar-animated" id="sa-progress-fill" style="width:0%"></div>
+                                    </div>
+                                </div>
+                                <div class="d-flex flex-column gap-2 mt-3" id="sa-export-btns" style="display:none!important">
+                                    <button class="btn btn-sm btn-outline-secondary text-start" onclick="saExportJSON()"><i class="fas fa-download me-2 text-primary"></i>Export JSON Report</button>
+                                    <button class="btn btn-sm btn-outline-secondary text-start" onclick="saExportMarkdown()"><i class="fas fa-file-alt me-2 text-primary"></i>Export Markdown (.md)</button>
+                                    <button class="btn btn-sm btn-outline-secondary text-start" onclick="saCopyGuide()"><i class="fas fa-copy me-2 text-primary"></i>Copy Replication Guide</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Main Analysis Results Dashboard (Full-width grid) -->
+                        <div class="col-lg-9 col-md-8">
+                            <div id="sa-empty" class="text-center text-muted p-5 card">
+                                <i class="fas fa-chart-pie fa-3x mb-3 opacity-50"></i>
+                                <h6 class="fw-semibold text-dark mb-1">No Style Report Generated Yet</h6>
+                                <p class="small text-muted mb-0">Upload a video in the Original Video card above and click "Analyze Video Style".</p>
+                            </div>
+
+                            <div id="sa-results" style="display:none">
+                                <!-- Top Row: 4 Metric Cards -->
+                                <div class="row g-3 mb-3">
+                                    <div class="col-xl-3 col-sm-6">
+                                        <div class="card p-3 text-center h-100">
+                                            <span class="small text-muted fw-medium d-block mb-1">Overall Style Score</span>
+                                            <div style="position:relative; width:100px; height:100px; margin:0 auto;">
+                                                <canvas id="sa-score-canvas" width="100" height="100" style="display:block;"></canvas>
+                                                <div id="sa-score-label" style="position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); font-size:1.25rem; font-weight:700; color:var(--primary-color);">—</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-3 col-sm-6">
+                                        <div class="card p-3 h-100">
+                                            <span class="small text-muted fw-medium d-block mb-1"><i class="fas fa-tachometer-alt me-1 text-primary"></i> Pacing & Rhythm</span>
+                                            <div id="sa-pacing-info" class="mt-2" style="font-size:0.85rem;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-3 col-sm-6">
+                                        <div class="card p-3 h-100">
+                                            <span class="small text-muted fw-medium d-block mb-1"><i class="fas fa-eye me-1 text-primary"></i> Visual Profile</span>
+                                            <div id="sa-visual-metrics" class="mt-2" style="font-size:0.825rem;"></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-xl-3 col-sm-6">
+                                        <div class="card p-3 h-100">
+                                            <span class="small text-muted fw-medium d-block mb-1"><i class="fas fa-volume-up me-1 text-primary"></i> Audio Profile</span>
+                                            <div id="sa-audio-info" class="mt-2" style="font-size:0.825rem;"></div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Middle Row: Pacing Timeline Chart & Color Palette -->
+                                <div class="row g-3 mb-3">
+                                    <div class="col-md-7">
+                                        <div class="card p-3 h-100">
+                                            <div class="d-flex justify-content-between align-items-center mb-2">
+                                                <span class="fw-semibold text-secondary small"><i class="fas fa-chart-bar me-1 text-primary"></i> Shot Length & Cuts Timeline</span>
+                                                <span id="sa-pacing-note" class="small text-muted"></span>
+                                            </div>
+                                            <canvas id="sa-pacing-canvas" height="90" style="width:100%; background:#0f172a; border-radius:6px;"></canvas>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <div class="card p-3 h-100">
+                                            <span class="fw-semibold text-secondary small mb-2 d-block"><i class="fas fa-palette me-1 text-primary"></i> Dominant Color Palette</span>
+                                            <div id="sa-palette" class="d-flex gap-2 flex-wrap mt-2"></div>
+                                            <span class="small text-muted mt-2 d-block" style="font-size:0.75rem;">Click any color swatch to copy hex value</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Recommendations Card -->
+                                <div class="card p-3 mb-3">
+                                    <h6 class="fw-semibold text-secondary mb-2"><i class="fas fa-lightbulb me-1 text-warning"></i> Editing Recommendations</h6>
+                                    <ul id="sa-recommendations" class="mb-0 ps-3" style="font-size:0.85rem;"></ul>
+                                </div>
+
+                                <!-- Replication Guide Card -->
+                                <div id="sa-guide-wrap" class="card p-3 mb-3" style="display:none">
+                                    <div class="d-flex align-items-center justify-content-between mb-3 border-bottom pb-2">
+                                        <h6 class="fw-semibold text-dark mb-0"><i class="fas fa-book me-2 text-primary"></i>Step-by-Step Replication Guide</h6>
+                                        <span class="badge bg-light text-muted border">Evidence-Based</span>
+                                    </div>
+                                    <div class="row g-3">
+                                        <div class="col-md-6"><div id="sa-guide-project-setup" class="sa-guide-section"></div></div>
+                                        <div class="col-md-6"><div id="sa-guide-shot-recipe" class="sa-guide-section"></div></div>
+                                        <div class="col-md-6"><div id="sa-guide-edit-blueprint" class="sa-guide-section"></div></div>
+                                        <div class="col-md-6"><div id="sa-guide-color-recipe" class="sa-guide-section"></div></div>
+                                        <div class="col-md-6"><div id="sa-guide-audio-recipe" class="sa-guide-section"></div></div>
+                                        <div class="col-md-6"><div id="sa-guide-export-settings" class="sa-guide-section"></div></div>
+                                        <div class="col-12"><div id="sa-guide-editor-steps" class="sa-guide-section"></div></div>
+                                    </div>
+                                </div>
+
+                                <!-- Full Analysis Data Table -->
+                                <div class="card p-3">
+                                    <h6 class="fw-semibold text-secondary mb-2"><i class="fas fa-table me-1 text-primary"></i> Full Video Metadata & Metrics</h6>
+                                    <div id="sa-full-table" class="table-responsive"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- Add Merge Videos Content -->
                 <div class="feature-content" id="mergeContent">
@@ -1146,42 +1155,139 @@ td{padding:.4rem .6rem;border-bottom:1px solid var(--border);}
                         <i class="fas fa-plus me-2"></i>Merge Videos
                     </button>
                 </div>
-            </div>
+                    </div>
 
-            <div class="col-lg-4">
-                <!-- Output Section -->
-                <div class="output-section">
-                    <h3><i class="fas fa-play-circle me-2"></i>Output Preview</h3>
-                    <div class="video-container">
-                        <video id="outputPreview" class="video-preview w-100" controls>
-                            Your browser does not support the video tag.
-                        </video>
-                    </div>
-                    <div id="processedVideoOptions" class="form-check mt-3" style="display: none;">
-                        <input class="form-check-input" type="checkbox" id="useProcessedVideo">
-                        <label class="form-check-label" for="useProcessedVideo">
-                            Apply next effect to processed video
-                        </label>
-                    </div>
-                    <div class="progress-container mt-3" style="display: none;">
-                        <div class="progress">
-                            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>
+                    <!-- Text Commands (Pushed to the very BOTTOM of tools card!) -->
+                    <div class="prompt-section mt-4 pt-3 border-top">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <div class="card-header-title">
+                                <i class="fas fa-terminal text-primary"></i> Text Commands
+                            </div>
+                            <button class="btn btn-sm btn-outline-secondary" type="button" onclick="showPromptHelp()">
+                                <i class="fas fa-question-circle me-1"></i> Toggle All Commands
+                            </button>
                         </div>
-                        <div class="status-message text-center mt-2"></div>
+                        <div class="prompt-input mb-2">
+                            <input type="text" id="promptInput" placeholder="Enter your command (e.g. 'trim start=10 end=30', 'speed factor=1.5', 'color_grade preset=cinematic')" class="form-control">
+                            <button onclick="processPrompt()" class="btn btn-primary px-4">
+                                <i class="fas fa-paper-plane me-1"></i> Process
+                            </button>
+                        </div>
+                        <div class="prompt-help mt-3">
+                            <div id="basicCommands">
+                                <strong>Basic Operations:</strong>
+                                <ul class="mb-2">
+                                    <li><code>trim start=10 end=30</code> - Trim video from 10s to 30s</li>
+                                    <li><code>resize width=1920 height=1080</code> - Resize to 1920x1080</li>
+                                    <li><code>speed factor=2.0</code> - Change speed (2x faster)</li>
+                                    <li><code>extract_audio format=mp3</code> - Extract audio as MP3</li>
+                                </ul>
+                                <strong>Effects & Color:</strong>
+                                <ul>
+                                    <li><code>color_grade preset=cinematic</code> - Apply color preset</li>
+                                    <li><code>effect type=blur strength=2</code> - Apply blur effect</li>
+                                    <li><code>overlay type=text content="Hello" position=center</code> - Add text</li>
+                                </ul>
+                            </div>
+                            <div id="allCommands" style="display: none;">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <strong>Basic Operations:</strong>
+                                        <ul style="font-size: 0.85em;">
+                                            <li><code>trim start=X end=Y</code></li>
+                                            <li><code>resize width=X height=Y</code></li>
+                                            <li><code>speed factor=X</code></li>
+                                            <li><code>extract_audio format=mp3|wav</code></li>
+                                        </ul>
+                                        <strong>Color & Effects:</strong>
+                                        <ul style="font-size: 0.85em;">
+                                            <li><code>color_grade preset=cinematic|vintage|warm|cool|noir|vibrant</code></li>
+                                            <li><code>color_grade brightness=X contrast=Y saturation=Z</code></li>
+                                            <li><code>effect type=blur|sepia|negative|mirror|pixelate|edge_detection strength=X</code></li>
+                                            <li><code>speed_ramp start=X end=Y factor=Z</code></li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <strong>Animation & Text:</strong>
+                                        <ul style="font-size: 0.85em;">
+                                            <li><code>animation type=zoom|pan|fade|rotate start=X end=Y scale=Z</code></li>
+                                            <li><code>animation type=pan direction=left|right|up|down</code></li>
+                                            <li><code>overlay type=text content="Text" position=center|top|bottom</code></li>
+                                            <li><code>overlay type=text content="Text" x=X y=Y duration=W</code></li>
+                                        </ul>
+                                        <strong>Multi-Video Commands:</strong>
+                                        <ul style="font-size: 0.85em;">
+                                            <li><code>merge_videos transition=fade duration=2</code> (requires multiple files)</li>
+                                            <li><code>transition type=dissolve duration=1.5</code> (requires multiple files)</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <a id="downloadBtn" class="btn btn-primary w-100 mt-3" style="display: none;">
-                        <i class="fas fa-download me-2"></i>Download Processed Video
-                    </a>
                 </div>
             </div>
         </div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+        let originalVideo = null;
         let currentVideo = null;
-        let processedVideo = null; // To store the most recently processed video
+        let processedVideo = null;
+        let videoHistory = []; // Stack of previous video states
         let mergeFilesList = [];
+
+        function updateUndoButton() {
+            const undoBtn = document.getElementById('undoBtn');
+            if (!undoBtn) return;
+            if (videoHistory.length > 0) {
+                undoBtn.disabled = false;
+                undoBtn.innerHTML = `<i class="fas fa-undo me-1"></i> Undo (${videoHistory.length})`;
+                undoBtn.title = `Undo last effect (revert to previous video)`;
+            } else {
+                undoBtn.disabled = true;
+                undoBtn.innerHTML = `<i class="fas fa-undo me-1"></i> Undo`;
+                undoBtn.title = "No previous video state to undo";
+            }
+        }
+
+        function undoLastEffect() {
+            if (videoHistory.length === 0) return;
+
+            const prevState = videoHistory.pop();
+            currentVideo = prevState.file || originalVideo;
+            processedVideo = (videoHistory.length > 0) ? currentVideo : null;
+
+            const outputPreview = document.getElementById('outputPreview');
+            const outputPlaceholder = document.getElementById('outputPlaceholder');
+            const downloadBtn = document.getElementById('downloadBtn');
+
+            if (prevState.url && prevState.url !== 'original') {
+                if (outputPreview) {
+                    outputPreview.src = prevState.url + (prevState.url.includes('?') ? '&' : '?') + 't=' + new Date().getTime();
+                    outputPreview.style.display = 'block';
+                    outputPreview.load();
+                }
+                if (outputPlaceholder) outputPlaceholder.style.display = 'none';
+                if (downloadBtn) {
+                    downloadBtn.href = prevState.url;
+                    downloadBtn.style.display = 'block';
+                    downloadBtn.download = prevState.name || 'reverted_video.mp4';
+                }
+            } else {
+                // Reverted back to original state
+                if (outputPreview) {
+                    outputPreview.src = '';
+                    outputPreview.style.display = 'none';
+                }
+                if (outputPlaceholder) outputPlaceholder.style.display = 'block';
+                if (downloadBtn) downloadBtn.style.display = 'none';
+            }
+
+            syncFeatureVideos(currentVideo);
+            updateUndoButton();
+            updateProgress(100, `Reverted to previous state (${prevState.name || 'original'})`);
+        }
 
         function showFeature(feature, btn) {
             document.querySelectorAll('.feature-content').forEach(content => {
@@ -1278,60 +1384,72 @@ td{padding:.4rem .6rem;border-bottom:1px solid var(--border);}
         // File upload handling
         const uploadArea = document.getElementById('uploadArea');
 
-        uploadArea.addEventListener('click', () => {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = 'video/*,audio/*';
-            input.onchange = (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                    currentVideo = file;  // Set the currentVideo
-                    uploadArea.innerHTML = `
-                        <p>Selected file: ${file.name}</p>
-                        <div class="badge mt-2 px-3 py-2" style="background:#6c63ff; color:white; font-size:1.1rem; cursor:pointer; box-shadow:0 4px 12px rgba(108,99,255,0.5);"><i class="fas fa-video me-2"></i>Click to change video</div>
-                    `;
-                    // Show video preview
-                    const videoPreview = document.createElement('video');
-                    videoPreview.src = URL.createObjectURL(file);
-                    videoPreview.controls = true;
-                    videoPreview.style.maxWidth = '100%';
-                    videoPreview.style.marginTop = '20px';
-                    uploadArea.appendChild(videoPreview);
-                    syncFeatureVideos(file);
-                }
-            };
-            input.click();
-        });
+        function handleFileSelection(file) {
+            if (!file) return;
+            originalVideo = file;
+            currentVideo = file;
+            processedVideo = null;
+            videoHistory = [];
+            updateUndoButton();
 
-        uploadArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadArea.style.borderColor = '#007bff';
-        });
+            const uploadArea = document.getElementById('uploadArea');
+            const inputVideoContainer = document.getElementById('inputVideoContainer');
+            const videoPreview = document.getElementById('videoPreview');
+            const inputBadge = document.getElementById('inputVideoBadge');
 
-        uploadArea.addEventListener('dragleave', () => {
-            uploadArea.style.borderColor = '#ccc';
-        });
-
-        uploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadArea.style.borderColor = '#ccc';
-            const file = e.dataTransfer.files[0];
-            if (file) {
-                currentVideo = file;  // Set the currentVideo
-                uploadArea.innerHTML = `
-                    <p>Selected file: ${file.name}</p>
-                    <div class="badge mt-2 px-3 py-2" style="background:#6c63ff; color:white; font-size:1.1rem; cursor:pointer; box-shadow:0 4px 12px rgba(108,99,255,0.5);"><i class="fas fa-video me-2"></i>Click to change video</div>
-                `;
-                // Show video preview
-                const videoPreview = document.createElement('video');
-                videoPreview.src = URL.createObjectURL(file);
-                videoPreview.controls = true;
-                videoPreview.style.maxWidth = '100%';
-                videoPreview.style.marginTop = '20px';
-                uploadArea.appendChild(videoPreview);
-                syncFeatureVideos(file);
+            if (inputBadge) {
+                inputBadge.textContent = file.name;
+                inputBadge.className = 'badge bg-primary text-white';
             }
-        });
+
+            if (uploadArea) {
+                uploadArea.innerHTML = `
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="text-start">
+                            <span class="small text-muted d-block">Selected:</span>
+                            <span class="fw-semibold text-dark">${file.name}</span>
+                        </div>
+                        <span class="btn btn-sm btn-outline-secondary"><i class="fas fa-exchange-alt me-1"></i>Change Video</span>
+                    </div>
+                `;
+            }
+
+            if (videoPreview) {
+                videoPreview.src = URL.createObjectURL(file);
+                videoPreview.style.display = 'block';
+                videoPreview.load();
+            }
+            if (inputVideoContainer) {
+                inputVideoContainer.style.display = 'block';
+            }
+
+            syncFeatureVideos(file);
+        }
+
+        if (uploadArea) {
+            uploadArea.addEventListener('click', () => {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = 'video/*,audio/*';
+                input.onchange = (e) => handleFileSelection(e.target.files[0]);
+                input.click();
+            });
+
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = 'var(--primary-color)';
+            });
+
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.style.borderColor = '#cbd5e1';
+            });
+
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = '#cbd5e1';
+                handleFileSelection(e.dataTransfer.files[0]);
+            });
+        }
 
         // Update the handleMergeFiles function
         function handleMergeFiles(files) {
@@ -1340,8 +1458,8 @@ td{padding:.4rem .6rem;border-bottom:1px solid var(--border);}
             const videoPreviewsDiv = document.querySelector('#mergeFiles .video-previews');
             
             // Clear previous content
-            selectedFilesDiv.innerHTML = '';
-            videoPreviewsDiv.innerHTML = '';
+            if (selectedFilesDiv) selectedFilesDiv.innerHTML = '';
+            if (videoPreviewsDiv) videoPreviewsDiv.innerHTML = '';
 
             // Show selected files with preview
             files.forEach((file, index) => {
@@ -1354,7 +1472,7 @@ td{padding:.4rem .6rem;border-bottom:1px solid var(--border);}
                         <i class="fas fa-times"></i>
                     </button>
                 `;
-                selectedFilesDiv.appendChild(fileItem);
+                if (selectedFilesDiv) selectedFilesDiv.appendChild(fileItem);
 
                 // Create video preview
                 const videoPreview = document.createElement('video');
@@ -1363,7 +1481,7 @@ td{padding:.4rem .6rem;border-bottom:1px solid var(--border);}
                 videoPreview.style.maxWidth = '200px';
                 videoPreview.style.margin = '10px';
                 videoPreview.className = 'video-preview';
-                videoPreviewsDiv.appendChild(videoPreview);
+                if (videoPreviewsDiv) videoPreviewsDiv.appendChild(videoPreview);
             });
         }
 
@@ -1408,7 +1526,7 @@ td{padding:.4rem .6rem;border-bottom:1px solid var(--border);}
                 // Check if response is JSON
                 const contentType = response.headers.get('content-type');
                 if (!contentType || !contentType.includes('application/json')) {
-                    throw new Error('Server returned non-JSON response');
+                    throw new Error('Server returned non-JSON response. Please refresh and log in again.');
                 }
 
                 const result = await response.json();
@@ -1433,33 +1551,43 @@ td{padding:.4rem .6rem;border-bottom:1px solid var(--border);}
         }
 
         // Update the merge input handling
-        document.getElementById('mergeInput').addEventListener('change', function(e) {
-            const files = Array.from(e.target.files).filter(file => file.type.startsWith('video/'));
-            if (files.length > 0) {
-                handleMergeFiles(files);
-            }
-        });
+        const mergeInputEl = document.getElementById('mergeInput');
+        if (mergeInputEl) {
+            mergeInputEl.addEventListener('change', function(e) {
+                const files = Array.from(e.target.files).filter(file => file.type.startsWith('video/'));
+                if (files.length > 0) {
+                    handleMergeFiles(files);
+                }
+            });
+        }
 
         // Add drag and drop for merge
-        const mergeDropArea = document.querySelector('#mergeContent .upload-placeholder');
+        const mergeDropArea = document.getElementById('mergeDropArea');
 
-        mergeDropArea.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            mergeDropArea.style.borderColor = '#007bff';
-        });
+        if (mergeDropArea) {
+            mergeDropArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                mergeDropArea.style.borderColor = '#007bff';
+            });
 
-        mergeDropArea.addEventListener('dragleave', () => {
-            mergeDropArea.style.borderColor = '#ccc';
-        });
+            mergeDropArea.addEventListener('dragleave', () => {
+                mergeDropArea.style.borderColor = '#ccc';
+            });
 
-        mergeDropArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            mergeDropArea.style.borderColor = '#ccc';
-            const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('video/'));
-            if (files.length > 0) {
-                handleMergeFiles(files);
-            }
-        });
+            mergeDropArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                mergeDropArea.style.borderColor = '#ccc';
+                const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('video/'));
+                if (files.length > 0) {
+                    handleMergeFiles(files);
+                }
+            });
+
+            mergeDropArea.addEventListener('click', () => {
+                const mergeInput = document.getElementById('mergeInput');
+                if (mergeInput) mergeInput.click();
+            });
+        }
 
         // Progress handling
         function showProgress(show = true) {
@@ -1623,42 +1751,51 @@ td{padding:.4rem .6rem;border-bottom:1px solid var(--border);}
 
         // Handle using original or processed video
         function getVideoToProcess() {
-            const useProcessedVideo = document.getElementById('useProcessedVideo');
-            if (useProcessedVideo && useProcessedVideo.checked && processedVideo) {
-                return processedVideo;
-            }
-            return processedVideo || currentVideo;
+            return currentVideo || originalVideo;
         }
 
         // Update showOutput to store processed video and update ongoing video state
         function showOutput(url) {
             const outputPreview = document.getElementById('outputPreview');
+            const outputPlaceholder = document.getElementById('outputPlaceholder');
             const downloadBtn = document.getElementById('downloadBtn');
-            
+
+            // Save previous active video to history stack
+            if (currentVideo) {
+                const prevUrl = (outputPreview && outputPreview.src && outputPreview.style.display !== 'none') 
+                                ? outputPreview.src 
+                                : (originalVideo ? URL.createObjectURL(originalVideo) : 'original');
+                videoHistory.push({
+                    file: currentVideo,
+                    url: prevUrl,
+                    name: currentVideo.name || 'previous_step.mp4'
+                });
+            }
+
             fetch(url)
                 .then(response => response.blob())
                 .then(blob => {
                     const outName = url.split('/').pop() || 'processed_video.mp4';
                     processedVideo = new File([blob], outName, { type: blob.type || 'video/mp4' });
-                    currentVideo = processedVideo; // Keep currentVideo synced to the latest ongoing video
+                    currentVideo = processedVideo;
                     syncFeatureVideos(processedVideo);
-                    
+
                     if (outputPreview) {
                         outputPreview.src = url + '?t=' + new Date().getTime();
                         outputPreview.style.display = 'block';
                         outputPreview.load();
                     }
-                    
+                    if (outputPlaceholder) {
+                        outputPlaceholder.style.display = 'none';
+                    }
+
                     if (downloadBtn) {
                         downloadBtn.href = url;
                         downloadBtn.style.display = 'block';
                         downloadBtn.download = outName;
                     }
 
-                    const opt = document.getElementById('processedVideoOptions');
-                    if (opt) opt.style.display = 'block';
-                    const chk = document.getElementById('useProcessedVideo');
-                    if (chk) chk.checked = true;
+                    updateUndoButton();
                 })
                 .catch(error => {
                     console.error('Error fetching processed video:', error);
@@ -1996,8 +2133,8 @@ if (!contentType || !contentType.includes('application/json')) {
                         .then(response => response.blob())
                         .then(blob => {
                             processedVideo = new File([blob], result.output_file, { type: 'video/mp4' });
-                            // Show the checkbox for using processed video
-                            document.getElementById('processedVideoOptions').style.display = 'block';
+                            currentVideo = processedVideo;
+                            updateUndoButton();
                         });
                     
                     // Add download link in status div

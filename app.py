@@ -450,7 +450,7 @@ def check_imagemagick():
 imagemagick_available = check_imagemagick()
 
 # FFmpeg utility functions for direct video processing
-def compress_video_ffmpeg(input_path, output_path, crf=23, preset='medium'):
+def compress_video_ffmpeg(input_path, output_path, crf=23, preset='ultrafast'):
     """
     Compress video using direct FFmpeg command for better performance
     """
@@ -462,6 +462,7 @@ def compress_video_ffmpeg(input_path, output_path, crf=23, preset='medium'):
             '-crf', str(crf),
             '-c:a', 'aac',
             '-b:a', '128k',
+            '-threads', '0',
             '-movflags', '+faststart',
             '-y',  # Overwrite output file
             output_path
@@ -482,16 +483,21 @@ def compress_video_ffmpeg(input_path, output_path, crf=23, preset='medium'):
 
 def trim_video_ffmpeg(input_path, output_path, start_time, end_time):
     """
-    Trim video using direct FFmpeg for faster processing
+    Trim video using fast seek before input and ultrafast encoding
     """
     try:
         duration = end_time - start_time
         cmd = [
-            'ffmpeg', '-i', input_path,
+            'ffmpeg',
             '-ss', str(start_time),
+            '-i', input_path,
             '-t', str(duration),
-            '-c', 'copy',  # Copy streams without re-encoding for speed
+            '-c:v', 'libx264',
+            '-preset', 'ultrafast',
+            '-crf', '22',
+            '-c:a', 'aac',
             '-avoid_negative_ts', 'make_zero',
+            '-threads', '0',
             '-y',
             output_path
         ]
@@ -551,9 +557,10 @@ def resize_video_ffmpeg(input_path, output_path, width, height):
             'ffmpeg', '-i', input_path,
             '-vf', f'scale={width}:{height}:force_original_aspect_ratio=decrease,pad={width}:{height}:(ow-iw)/2:(oh-ih)/2',
             '-c:v', 'libx264',
-            '-preset', 'medium',
-            '-crf', '23',
+            '-preset', 'ultrafast',
+            '-crf', '22',
             '-c:a', 'aac',
+            '-threads', '0',
             '-movflags', '+faststart',
             '-y', output_path
         ]
@@ -574,9 +581,10 @@ def change_speed_ffmpeg(input_path, output_path, speed_factor):
             '-filter_complex', f'[0:v]setpts={1/video_speed}*PTS[v];[0:a]atempo={audio_speed}[a]',
             '-map', '[v]', '-map', '[a]',
             '-c:v', 'libx264',
-            '-preset', 'medium',
-            '-crf', '23',
+            '-preset', 'ultrafast',
+            '-crf', '22',
             '-c:a', 'aac',
+            '-threads', '0',
             '-movflags', '+faststart',
             '-y', output_path
         ]
@@ -1027,11 +1035,31 @@ def get_video_info(input_path):
         }
 
 def run_ffmpeg_command(cmd, timeout=300):
-    """Run FFmpeg command with error handling and automatic binary resolution."""
+    """Run FFmpeg command with error handling, automatic binary resolution, and speed optimizations."""
     try:
-        # Ensure the first command token uses the resolved FFMPEG_BIN if cmd[0] is 'ffmpeg'
-        if isinstance(cmd, list) and cmd and cmd[0] == 'ffmpeg':
-            cmd = [FFMPEG_BIN] + cmd[1:]
+        if isinstance(cmd, list) and cmd:
+            # Ensure the first command token uses the resolved FFMPEG_BIN if cmd[0] is 'ffmpeg'
+            if cmd[0] == 'ffmpeg':
+                cmd = [FFMPEG_BIN] + cmd[1:]
+            
+            # Speed optimization: Optimize presets and inject multi-threading if not present
+            optimized_cmd = []
+            i = 0
+            has_threads = '-threads' in cmd
+            while i < len(cmd):
+                if cmd[i] == '-preset' and i + 1 < len(cmd) and cmd[i+1] in ('medium', 'slow', 'slower', 'veryslow'):
+                    optimized_cmd.extend(['-preset', 'ultrafast'])
+                    i += 2
+                else:
+                    optimized_cmd.append(cmd[i])
+                    i += 1
+            
+            if not has_threads and len(optimized_cmd) > 1:
+                # Add -threads 0 right after the executable to utilize all CPU cores
+                optimized_cmd.insert(1, '-threads')
+                optimized_cmd.insert(2, '0')
+            cmd = optimized_cmd
+
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
         if result.returncode != 0:
             print(f"FFmpeg error: {result.stderr}")
@@ -1056,6 +1084,15 @@ def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'user_id' not in session:
+            # Return JSON for AJAX requests, redirect for normal browser requests
+            if (request.headers.get('X-Requested-With') == 'XMLHttpRequest' or
+                request.headers.get('Content-Type', '').startswith('application/json') or
+                request.method == 'POST'):
+                return jsonify({
+                    'success': False,
+                    'error': 'Authentication required. Please log in.',
+                    'redirect': url_for('login')
+                }), 401
             return redirect(url_for('login'))
         return f(*args, **kwargs)
     return decorated_function
@@ -1448,15 +1485,18 @@ def trim_video():
         # Calculate duration
         duration = end_time - start_time
         
-        # FFmpeg command for trimming
+        # FFmpeg command for trimming with fast seek before input and ultrafast preset
         cmd = [
-            'ffmpeg', '-i', input_path,
+            'ffmpeg',
             '-ss', str(start_time),
+            '-i', input_path,
             '-t', str(duration),
             '-c:v', 'libx264',
+            '-preset', 'ultrafast',
+            '-crf', '22',
             '-c:a', 'aac',
-            '-crf', '18',
-            '-preset', 'fast',
+            '-avoid_negative_ts', 'make_zero',
+            '-threads', '0',
             '-movflags', '+faststart',
             '-pix_fmt', 'yuv420p',
             '-y',
@@ -1587,8 +1627,9 @@ def merge_videos():
                 '-map', '[outa]',
                 '-c:v', 'libx264',
                 '-c:a', 'aac',
-                '-crf', '23',
-                '-preset', 'medium',
+                '-crf', '22',
+                '-preset', 'ultrafast',
+                '-threads', '0',
                 '-movflags', '+faststart',
                 '-pix_fmt', 'yuv420p',
                 '-y', output_path
@@ -1616,8 +1657,9 @@ def merge_videos():
                         '-r', '30',
                         '-ar', '44100',
                         '-ac', '2',
-                        '-crf', '23',
-                        '-preset', 'medium',
+                        '-crf', '22',
+                        '-preset', 'ultrafast',
+                        '-threads', '0',
                         '-pix_fmt', 'yuv420p',
                         '-y', norm_path
                     ]
@@ -1790,8 +1832,9 @@ def change_speed():
             '-map', '[v]', '-map', '[a]',
             '-c:v', 'libx264',
             '-c:a', 'aac',
-            '-crf', '18',
-            '-preset', 'fast',
+            '-crf', '22',
+            '-preset', 'ultrafast',
+            '-threads', '0',
             '-movflags', '+faststart',
             '-pix_fmt', 'yuv420p',
             '-y',
@@ -1858,8 +1901,9 @@ def resize_video():
             '-vf', f'scale={width}:{height}:force_original_aspect_ratio=decrease,pad={width}:{height}:(ow-iw)/2:(oh-ih)/2',
             '-c:v', 'libx264',
             '-c:a', 'aac',
-            '-crf', '18',
-            '-preset', 'fast',
+            '-crf', '22',
+            '-preset', 'ultrafast',
+            '-threads', '0',
             '-movflags', '+faststart',
             '-pix_fmt', 'yuv420p',
             '-y',
@@ -2149,48 +2193,48 @@ def apply_color_grading():
             cmd = [
                 'ffmpeg', '-i', input_path,
                 '-vf', 'eq=contrast=1.5:saturation=1.5:brightness=0.05',
-                '-c:v', 'libx264', '-preset', 'medium', '-crf', '18',
-                '-c:a', 'aac', '-movflags', '+faststart', '-y', output_path
+                '-c:v', 'libx264', '-preset', 'ultrafast', '-crf', '22',
+                '-c:a', 'aac', '-threads', '0', '-movflags', '+faststart', '-y', output_path
             ]
         elif color_style == 'vintage':
             # Vintage look with sepia tones
             cmd = [
                 'ffmpeg', '-i', input_path,
                 '-vf', 'colorchannelmixer=.393:.769:.189:0:.349:.686:.168:0:.272:.534:.131',
-                '-c:v', 'libx264', '-preset', 'medium', '-crf', '18',
-                '-c:a', 'aac', '-movflags', '+faststart', '-y', output_path
+                '-c:v', 'libx264', '-preset', 'ultrafast', '-crf', '22',
+                '-c:a', 'aac', '-threads', '0', '-movflags', '+faststart', '-y', output_path
             ]
         elif color_style == 'warm':
             # Warm color temperature using colorbalance (boost reds, reduce blues)
             cmd = [
                 'ffmpeg', '-i', input_path,
                 '-vf', 'eq=brightness=0.1:saturation=1.2,colorbalance=rs=0.1:gs=-0.05:bs=-0.1',
-                '-c:v', 'libx264', '-preset', 'medium', '-crf', '18',
-                '-c:a', 'aac', '-movflags', '+faststart', '-y', output_path
+                '-c:v', 'libx264', '-preset', 'ultrafast', '-crf', '22',
+                '-c:a', 'aac', '-threads', '0', '-movflags', '+faststart', '-y', output_path
             ]
         elif color_style == 'cool':
             # Cool color temperature using colorbalance (reduce reds, boost blues)
             cmd = [
                 'ffmpeg', '-i', input_path,
                 '-vf', 'eq=brightness=-0.05:saturation=0.9,colorbalance=rs=-0.1:gs=0.05:bs=0.1',
-                '-c:v', 'libx264', '-preset', 'medium', '-crf', '18',
-                '-c:a', 'aac', '-movflags', '+faststart', '-y', output_path
+                '-c:v', 'libx264', '-preset', 'ultrafast', '-crf', '22',
+                '-c:a', 'aac', '-threads', '0', '-movflags', '+faststart', '-y', output_path
             ]
         elif color_style == 'noir':
             # Black and white with high contrast
             cmd = [
                 'ffmpeg', '-i', input_path,
                 '-vf', 'format=gray,eq=contrast=1.5:brightness=0.1',
-                '-c:v', 'libx264', '-preset', 'medium', '-crf', '18',
-                '-c:a', 'aac', '-movflags', '+faststart', '-y', output_path
+                '-c:v', 'libx264', '-preset', 'ultrafast', '-crf', '22',
+                '-c:a', 'aac', '-threads', '0', '-movflags', '+faststart', '-y', output_path
             ]
         else:
             # Default - slight enhancement
             cmd = [
                 'ffmpeg', '-i', input_path,
                 '-vf', 'eq=contrast=1.1:saturation=1.05',
-                '-c:v', 'libx264', '-preset', 'medium', '-crf', '18',
-                '-c:a', 'aac', '-movflags', '+faststart', '-y', output_path
+                '-c:v', 'libx264', '-preset', 'ultrafast', '-crf', '22',
+                '-c:a', 'aac', '-threads', '0', '-movflags', '+faststart', '-y', output_path
             ]
         
         # Execute FFmpeg command
