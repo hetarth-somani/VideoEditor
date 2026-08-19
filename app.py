@@ -36,6 +36,8 @@ import tempfile
 import shutil
 import requests
 from datetime import datetime, timedelta
+import math
+from urllib.parse import quote
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from dotenv import load_dotenv
@@ -540,19 +542,6 @@ def merge_videos_ffmpeg(input_paths, output_path):
     except Exception as e:
         return False, f"Error: {str(e)}"
 
-def check_ffmpeg():
-    """Check if FFmpeg is available"""
-    try:
-        result = subprocess.run(['ffmpeg', '-version'], capture_output=True, text=True)
-        if result.returncode == 0:
-            print("FFmpeg is available and working")
-            return True
-    except FileNotFoundError:
-        print("WARNING: FFmpeg not found. Please install FFmpeg for optimal performance.")
-    return False
-
-# Check FFmpeg availability at startup
-ffmpeg_available = check_ffmpeg()
 
 # Comprehensive FFmpeg functions for all video operations
 def resize_video_ffmpeg(input_path, output_path, width, height):
@@ -867,204 +856,6 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 login_manager.session_protection = 'strong'
-
-# YouTube Video Analysis System - Clean Implementation
-class YouTubeVideoAnalyzer:
-    """
-    Analyzes YouTube videos using metadata from YouTube Data API
-    to determine suitability for video editing purposes.
-    """
-    
-    def __init__(self, api_key):
-        self.api_key = api_key
-        self.session = requests.Session()
-        
-        # Configure retry strategy for API calls
-        retry_strategy = Retry(
-            total=3,
-            backoff_factor=1,
-            status_forcelist=[429, 500, 502, 503, 504]
-        )
-        adapter = HTTPAdapter(max_retries=retry_strategy)
-        self.session.mount("https://", adapter)
-        
-        # Scoring weights for different factors
-        self.weights = {
-            'keyword_match': 0.25,
-            'duration_score': 0.20,
-            'license_score': 0.15,
-            'freshness_score': 0.15,
-            'engagement_score': 0.10,
-            'quality_indicators': 0.10,
-            'tag_relevance': 0.05
-        }
-        
-        # Creative Commons license indicators
-        self.cc_licenses = [
-            'creativeCommons', 'creative commons', 'cc by', 'cc0',
-            'public domain', 'royalty free', 'copyright free'
-        ]
-        
-        # Quality indicators in titles/descriptions
-        self.quality_keywords = [
-            '4k', 'hd', 'high quality', 'professional', 'cinematic',
-            'stock footage', 'b-roll', 'background', 'overlay',
-            'transition', 'effect', 'template', 'royalty-free'
-        ]
-        
-        # Negative indicators (lower quality/unsuitable)
-        self.negative_keywords = [
-            'reaction', 'review', 'commentary', 'podcast', 'interview',
-            'live stream', 'gameplay', 'tutorial', 'vlog', 'unboxing'
-        ]
-    
-    def analyze_videos(self, search_query, max_results=50, filters=None):
-        """Main method to search and analyze YouTube videos"""
-        try:
-            videos = self._search_videos(search_query, max_results)
-            if not videos:
-                return []
-            
-            video_ids = [video['id']['videoId'] for video in videos]
-            detailed_videos = self._get_video_details(video_ids)
-            
-            analyzed_videos = []
-            for video in detailed_videos:
-                score_data = self._analyze_video(video, search_query, filters)
-                if score_data['total_score'] > 0.3:
-                    analyzed_videos.append(score_data)
-            
-            analyzed_videos.sort(key=lambda x: x['total_score'], reverse=True)
-            return analyzed_videos
-            
-        except Exception as e:
-            print(f"Error in video analysis: {str(e)}")
-            return []
-    
-    def _search_videos(self, query, max_results):
-        """Search for videos using YouTube Data API"""
-        url = 'https://www.googleapis.com/youtube/v3/search'
-        params = {
-            'part': 'snippet', 'q': query, 'maxResults': min(max_results, 50),
-            'type': 'video', 'videoEmbeddable': 'true', 'videoSyndicated': 'true',
-            'order': 'relevance', 'key': self.api_key
-        }
-        
-        response = self.session.get(url, params=params)
-        return response.json().get('items', []) if response.status_code == 200 else []
-    
-    def _get_video_details(self, video_ids):
-        """Get detailed video information"""
-        if not video_ids:
-            return []
-            
-        url = 'https://www.googleapis.com/youtube/v3/videos'
-        params = {
-            'part': 'snippet,contentDetails,statistics,status',
-            'id': ','.join(video_ids), 'key': self.api_key
-        }
-        
-        response = self.session.get(url, params=params)
-        return response.json().get('items', []) if response.status_code == 200 else []
-    
-    def _analyze_video(self, video, search_query, filters=None):
-        """Analyze a single video and calculate confidence score"""
-        snippet = video.get('snippet', {})
-        content_details = video.get('contentDetails', {})
-        statistics = video.get('statistics', {})
-        status = video.get('status', {})
-        
-        title = snippet.get('title', '').lower()
-        description = snippet.get('description', '').lower()
-        tags = snippet.get('tags', [])
-        duration = content_details.get('duration', 'PT0S')
-        license_type = status.get('license', 'youtube')
-        upload_date = snippet.get('publishedAt', '')
-        view_count = int(statistics.get('viewCount', 0))
-        like_count = int(statistics.get('likeCount', 0))
-        
-        scores = {
-            'keyword_match': self._calculate_keyword_score(title, description, search_query),
-            'duration_score': self._calculate_duration_score(duration, filters),
-            'license_score': self._calculate_license_score(license_type, title, description),
-            'freshness_score': self._calculate_freshness_score(upload_date),
-            'engagement_score': self._calculate_engagement_score(view_count, like_count),
-            'quality_indicators': self._calculate_quality_score(title, description),
-            'tag_relevance': self._calculate_tag_score(tags, search_query)
-        }
-        
-        total_score = sum(scores[key] * self.weights[key] for key in scores)
-        duration_seconds = self._parse_duration(duration)
-        
-        return {
-            'video_id': video['id'],
-            'title': snippet.get('title', ''),
-            'description': snippet.get('description', '')[:300] + '...' if len(snippet.get('description', '')) > 300 else snippet.get('description', ''),
-            'thumbnail': snippet.get('thumbnails', {}).get('high', {}).get('url', ''),
-            'channel': snippet.get('channelTitle', ''),
-            'duration': duration_seconds,
-            'duration_formatted': self._format_duration(duration_seconds),
-            'upload_date': upload_date,
-            'view_count': view_count,
-            'like_count': like_count,
-            'license_type': license_type,
-            'watch_url': f'https://www.youtube.com/watch?v={video["id"]}',
-            'embed_url': f'https://www.youtube.com/embed/{video["id"]}',
-            'total_score': round(total_score, 3),
-            'score_breakdown': {k: round(v, 3) for k, v in scores.items()},
-            'suitability_reason': self._generate_suitability_reason(scores, total_score)
-        }
-    
-    def _calculate_keyword_score(self, title, description, search_query):
-        query_words = search_query.lower().split()
-        text = f"{title} {description}"
-        
-        if search_query.lower() in text:
-            return 1.0
-        
-        matches = sum(1 for word in query_words if word in text)
-        word_score = matches / len(query_words) if query_words else 0
-        negative_penalty = sum(0.1 for neg in self.negative_keywords if neg in text)
-        
-        return max(0, word_score - negative_penalty)
-    
-    def _calculate_duration_score(self, duration, filters):
-        seconds = self._parse_duration(duration)
-        
-        if filters and 'min_duration' in filters and seconds < filters['min_duration']:
-            return 0
-        if filters and 'max_duration' in filters and seconds > filters['max_duration']:
-            return 0
-        
-        if 10 <= seconds <= 300:
-            return 1.0
-        elif 5 <= seconds <= 600:
-            return 0.8
-        elif 1 <= seconds <= 1800:
-            return 0.6
-        else:
-            return 0.2
-    
-    def _calculate_license_score(self, license_type, title, description):
-        """Score based on license type and Creative Commons indicators"""
-        score = 0
-        
-        # Official Creative Commons license
-        if license_type == 'creativeCommons':
-            score = 1.0
-        
-        # Check for CC indicators in title/description
-        text = f"{title} {description}"
-        cc_mentions = sum(1 for cc in self.cc_licenses if cc in text)
-        if cc_mentions > 0:
-            score = max(score, 0.8)
-        
-        # Standard YouTube license gets lower score
-        if license_type == 'youtube' and score == 0:
-            score = 0.3
-        
-        return score
-
 # User model
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -1472,7 +1263,7 @@ def test_animation_filter():
 def index():
     if current_user.is_authenticated:
         return redirect(url_for('editor'))
-    return render_template('login.html')
+    return redirect(url_for('login'))
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -2370,18 +2161,18 @@ def apply_color_grading():
                 '-c:a', 'aac', '-movflags', '+faststart', '-y', output_path
             ]
         elif color_style == 'warm':
-            # Warm color temperature
+            # Warm color temperature using colorbalance (boost reds, reduce blues)
             cmd = [
                 'ffmpeg', '-i', input_path,
-                '-vf', 'eq=brightness=0.1:saturation=1.2,colortemperature=3000',
+                '-vf', 'eq=brightness=0.1:saturation=1.2,colorbalance=rs=0.1:gs=-0.05:bs=-0.1',
                 '-c:v', 'libx264', '-preset', 'medium', '-crf', '18',
                 '-c:a', 'aac', '-movflags', '+faststart', '-y', output_path
             ]
         elif color_style == 'cool':
-            # Cool color temperature
+            # Cool color temperature using colorbalance (reduce reds, boost blues)
             cmd = [
                 'ffmpeg', '-i', input_path,
-                '-vf', 'eq=brightness=-0.05:saturation=0.9,colortemperature=7000',
+                '-vf', 'eq=brightness=-0.05:saturation=0.9,colorbalance=rs=-0.1:gs=0.05:bs=0.1',
                 '-c:v', 'libx264', '-preset', 'medium', '-crf', '18',
                 '-c:a', 'aac', '-movflags', '+faststart', '-y', output_path
             ]
@@ -2702,12 +2493,8 @@ def add_overlay():
                     '-preset', 'medium',
                     '-movflags', '+faststart',
                     '-pix_fmt', 'yuv420p',
-                '-crf', '23',
-                '-preset', 'medium',
-                '-movflags', '+faststart',
-                '-pix_fmt', 'yuv420p',
-                '-y', output_path
-            ]
+                    '-y', output_path
+                ]
             
         else:
             if os.path.exists(main_path):
@@ -3485,6 +3272,135 @@ def handle_transition_prompt(input_paths, prompt, timestamp):
                 os.remove(path)
         return jsonify({'success': False, 'error': f'Transition error: {str(e)}'})
 
+def handle_overlay_prompt(input_paths, prompt, timestamp):
+    """Handle overlay (picture-in-picture) prompts using FFmpeg overlay filter"""
+    try:
+        print(f"Handling overlay prompt for {len(input_paths)} videos...")
+
+        if len(input_paths) < 2:
+            return jsonify({'success': False, 'error': 'Overlay requires at least 2 videos'})
+
+        output_filename = f'prompt_overlay_{timestamp}.mp4'
+        output_path = os.path.join(app.config['OUTPUT_FOLDER'], output_filename)
+
+        # Scale the overlay (second video) to 30% of main video width, positioned top-right
+        overlay_cmd = [
+            'ffmpeg',
+            '-i', input_paths[0],
+            '-i', input_paths[1],
+            '-filter_complex',
+            '[1:v]scale=iw/3:ih/3[pip];[0:v][pip]overlay=W-w-10:10',
+            '-c:v', 'libx264',
+            '-c:a', 'copy',
+            '-crf', '23',
+            '-preset', 'medium',
+            '-movflags', '+faststart',
+            '-pix_fmt', 'yuv420p',
+            '-y', output_path
+        ]
+
+        success, message = run_ffmpeg_command(overlay_cmd, timeout=600)
+
+        # Clean up input files
+        for path in input_paths:
+            if os.path.exists(path):
+                os.remove(path)
+
+        if not success:
+            return jsonify({'success': False, 'error': f'Overlay failed: {message}'})
+
+        return jsonify({
+            'success': True,
+            'output_file': output_filename,
+            'message': 'Picture-in-picture overlay applied using FFmpeg'
+        })
+
+    except Exception as e:
+        print(f"Error in handle_overlay_prompt: {str(e)}")
+        for path in input_paths:
+            if os.path.exists(path):
+                os.remove(path)
+        return jsonify({'success': False, 'error': f'Overlay prompt error: {str(e)}'})
+
+def handle_split_screen_prompt(input_paths, prompt, timestamp):
+    """Handle side-by-side / split screen prompts using FFmpeg hstack filter"""
+    try:
+        print(f"Handling split screen prompt for {len(input_paths)} videos...")
+
+        if len(input_paths) < 2:
+            return jsonify({'success': False, 'error': 'Split screen requires at least 2 videos'})
+
+        output_filename = f'prompt_splitscreen_{timestamp}.mp4'
+        output_path = os.path.join(app.config['OUTPUT_FOLDER'], output_filename)
+
+        # Normalize both videos to the same height before stacking
+        normalized_paths = []
+        for i, input_path in enumerate(input_paths[:2]):  # Only use first 2 videos
+            norm_filename = f"split_norm_{timestamp}_{i}.mp4"
+            norm_path = os.path.join(app.config['UPLOAD_FOLDER'], norm_filename)
+
+            norm_cmd = [
+                'ffmpeg', '-i', input_path,
+                '-vf', 'scale=960:540:force_original_aspect_ratio=decrease,pad=960:540:(ow-iw)/2:(oh-ih)/2',
+                '-c:v', 'libx264',
+                '-c:a', 'aac',
+                '-r', '30',
+                '-ar', '44100',
+                '-ac', '2',
+                '-crf', '23',
+                '-preset', 'medium',
+                '-pix_fmt', 'yuv420p',
+                '-y', norm_path
+            ]
+
+            success, message = run_ffmpeg_command(norm_cmd, timeout=300)
+            if not success:
+                for path in input_paths + normalized_paths:
+                    if os.path.exists(path):
+                        os.remove(path)
+                return jsonify({'success': False, 'error': f'Failed to normalize video {i+1}: {message}'})
+
+            normalized_paths.append(norm_path)
+
+        # Stack the two normalized videos side-by-side
+        stack_cmd = [
+            'ffmpeg',
+            '-i', normalized_paths[0],
+            '-i', normalized_paths[1],
+            '-filter_complex', '[0:v][1:v]hstack=inputs=2[v];[0:a][1:a]amix=inputs=2[a]',
+            '-map', '[v]', '-map', '[a]',
+            '-c:v', 'libx264',
+            '-c:a', 'aac',
+            '-crf', '23',
+            '-preset', 'medium',
+            '-movflags', '+faststart',
+            '-pix_fmt', 'yuv420p',
+            '-y', output_path
+        ]
+
+        success, message = run_ffmpeg_command(stack_cmd, timeout=600)
+
+        # Clean up all temp files
+        for path in input_paths + normalized_paths:
+            if os.path.exists(path):
+                os.remove(path)
+
+        if not success:
+            return jsonify({'success': False, 'error': f'Split screen failed: {message}'})
+
+        return jsonify({
+            'success': True,
+            'output_file': output_filename,
+            'message': 'Side-by-side split screen created using FFmpeg'
+        })
+
+    except Exception as e:
+        print(f"Error in handle_split_screen_prompt: {str(e)}")
+        for path in input_paths:
+            if os.path.exists(path):
+                os.remove(path)
+        return jsonify({'success': False, 'error': f'Split screen prompt error: {str(e)}'})
+
 @app.route('/process-prompt', methods=['POST'])
 @login_required
 def process_prompt():
@@ -3853,9 +3769,9 @@ def execute_color_grade_command(prompt, main_path, timestamp):
         elif preset == 'vintage':
             vf = 'eq=brightness=0.05:contrast=0.8:saturation=0.7'
         elif preset == 'warm':
-            vf = 'colortemperature=4000'
+            vf = 'colorbalance=rs=0.1:gs=-0.05:bs=-0.1'
         elif preset == 'cool':
-            vf = 'colortemperature=7000'
+            vf = 'colorbalance=rs=-0.1:gs=0.05:bs=0.1'
         elif preset == 'noir':
             vf = 'hue=s=0'  # Black and white
         elif preset == 'vibrant':
@@ -5729,26 +5645,7 @@ def search_pexels_clips():
         print(f"Debug - General error in search_pexels_clips: {str(e)}")
         return jsonify({'success': False, 'error': str(e)})
 
-def process_video_segment(video_clip, target_size):
-    """Process video segment using ML-based optimization."""
-    def process_frame(frame):
-        import numpy as np
-        import cv2
-        # Convert to numpy array for ML processing
-        frame = np.array(frame)
-        
-        # Apply ML-based enhancement
-        # 1. Smart scaling using OpenCV's INTER_AREA for downscaling
-        if frame.shape[0] > target_size[1] or frame.shape[1] > target_size[0]:
-            frame = cv2.resize(frame, target_size, interpolation=cv2.INTER_AREA)
-        
-        # 2. Apply ML-based sharpening
-        kernel = np.array([[-1,-1,-1], [-1,9,-1], [-1,-1,-1]])
-        frame = cv2.filter2D(frame, -1, kernel)
-        
-        return frame
-    
-    return video_clip.fl_image(process_frame)
+
 
 @app.route('/merge-with-pexels', methods=['POST'])
 @login_required
@@ -5905,19 +5802,11 @@ def merge_with_pexels():
         except requests.exceptions.RequestException as e:
             print(f"Debug - Pexels merge download RequestException: {str(e)}")
             # Clean up any files that were saved
-            cleanup_videos(videos)
-            cleanup_videos(processed_videos)
-            if final_video:
-                final_video.close()
             cleanup_files(input_paths)
             return jsonify({'success': False, 'error': f'Error downloading Pexels video for merge: {str(e)}'})
         except Exception as e:
             print(f"Debug - Pexels merge processing unexpected error: {str(e)}")
             # Clean up on error
-            cleanup_videos(videos)
-            cleanup_videos(processed_videos)
-            if final_video:
-                final_video.close()
             cleanup_files(input_paths)
             return jsonify({'success': False, 'error': f'Error processing videos: {str(e)}'})
             
@@ -6017,16 +5906,7 @@ def download_pexels_clip():
         print(f"Debug - General error in download_pexels_clip: {str(e)}")
         return jsonify({'success': False, 'error': f'Unexpected error: {str(e)}'})
 
-def formatDuration(seconds):
-    """Format duration in seconds to HH:MM:SS format."""
-    try:
-        seconds = int(float(seconds))
-        hours = seconds // 3600
-        minutes = (seconds % 3600) // 60
-        seconds = seconds % 60
-        return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
-    except:
-        return "00:00:00"
+
 
 @app.route('/search-dailymotion-clips', methods=['POST'])
 @login_required
@@ -6050,7 +5930,7 @@ def search_dailymotion_clips():
         }
         
         # Make the API request to Dailymotion
-        api_url = f'https://api.dailymotion.com/videos?search={search_query}&limit=10&fields=id,title,description,thumbnail_url,duration,views_total,owner.username,embed_url'
+        api_url = f'https://api.dailymotion.com/videos?search={quote(search_query)}&limit=10&fields=id,title,description,thumbnail_url,duration,views_total,owner.username,embed_url'
         response = session.get(api_url, headers=headers)
         response.raise_for_status()
         

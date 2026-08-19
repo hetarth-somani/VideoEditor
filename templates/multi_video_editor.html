@@ -307,6 +307,15 @@
                     method: 'POST',
                     body: formData
                 });
+
+                // If the server redirected (e.g. session expired → login page),
+                // navigate the browser to the redirect destination instead of
+                // trying to parse the HTML login page as JSON.
+                if (response.redirected) {
+                    window.location.href = response.url;
+                    return;
+                }
+
                 const data = await response.json();
 
                 if (data.success) {

@@ -23,6 +23,7 @@ future==1.0.0
 greenlet==3.2.4
 gunicorn==21.2.0
 idna==3.10
+imageio-ffmpeg==0.6.0
 itsdangerous==2.2.0
 Jinja2==3.1.6
 kombu==5.5.4

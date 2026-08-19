@@ -8,10 +8,14 @@ venv/
 
 # Python
 __pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 *.pyc
 *.pyo
 *.pyd
 *.egg-info/
+.coverage
 dist/
 build/
 
@@ -21,11 +25,13 @@ output/
 outputs/
 recordings/
 
-# Large test files
+# Large test files and binaries
 *.mp4
 *.avi
 *.mov
 *.mkv
+*.exe
+ffmpeg.exe
 
 # Security - NEVER commit private keys
 *.pem
@@ -45,6 +51,8 @@ Thumbs.db
 node_modules/
 
 # Logs and temp files
+*.log
+*.tmp
 error.txt
 error_utf8.txt
 search_results.txt
